@@ -86,7 +86,7 @@ debugging. */
 /* Counts the nesting depth of calls to portENTER_CRITICAL().  Each task 
 maintains it's own count, so this variable is saved as part of the task
 context. */
-volatile unsigned portBASE_TYPE uxCriticalNesting = portINITIAL_NESTING_VALUE;
+unsigned portBASE_TYPE uxCriticalNesting = portINITIAL_NESTING_VALUE;
 
 /* To limit the amount of stack required by each task, this port uses a
 separate stack for interrupts. */
