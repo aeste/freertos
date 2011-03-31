@@ -274,10 +274,10 @@ unsigned portBASE_TYPE uxMask;
 
 	/* The OPB timer1 is used to generate the tick.  Use the provided library
 	functions to enable the timer and set the tick frequency. */
-	XTmrCtr_mDisable( XPAR_OPB_TIMER_1_BASEADDR, XPAR_OPB_TIMER_1_DEVICE_ID );
-	XTmrCtr_Initialize( &xTimer, XPAR_OPB_TIMER_1_DEVICE_ID );
-   	XTmrCtr_mSetLoadReg( XPAR_OPB_TIMER_1_BASEADDR, portCOUNTER_0, ulCounterValue );
-	XTmrCtr_mSetControlStatusReg( XPAR_OPB_TIMER_1_BASEADDR, portCOUNTER_0, XTC_CSR_LOAD_MASK | XTC_CSR_INT_OCCURED_MASK );
+	//XTmrCtr_mDisable( XPAR_OPB_TIMER_1_BASEADDR, XPAR_OPB_TIMER_1_DEVICE_ID );
+	//XTmrCtr_Initialize( &xTimer, XPAR_OPB_TIMER_1_DEVICE_ID );
+   	//XTmrCtr_mSetLoadReg( XPAR_OPB_TIMER_1_BASEADDR, portCOUNTER_0, ulCounterValue );
+	//XTmrCtr_mSetControlStatusReg( XPAR_OPB_TIMER_1_BASEADDR, portCOUNTER_0, XTC_CSR_LOAD_MASK | XTC_CSR_INT_OCCURED_MASK );
 
 	/* Set the timer interrupt enable bit while maintaining the other bit 
 	states. */
@@ -285,8 +285,8 @@ unsigned portBASE_TYPE uxMask;
 	uxMask |= XPAR_OPB_TIMER_1_INTERRUPT_MASK;
 	XIntc_Out32( ( XPAR_OPB_INTC_0_BASEADDR + XIN_IER_OFFSET ), ( uxMask ) );	
 	
-	XTmrCtr_Start( &xTimer, XPAR_OPB_TIMER_1_DEVICE_ID );
-	XTmrCtr_mSetControlStatusReg(XPAR_OPB_TIMER_1_BASEADDR, portCOUNTER_0, XTC_CSR_ENABLE_TMR_MASK | XTC_CSR_ENABLE_INT_MASK | XTC_CSR_AUTO_RELOAD_MASK | XTC_CSR_DOWN_COUNT_MASK | XTC_CSR_INT_OCCURED_MASK );
+	//XTmrCtr_Start( &xTimer, XPAR_OPB_TIMER_1_DEVICE_ID );
+	//XTmrCtr_mSetControlStatusReg(XPAR_OPB_TIMER_1_BASEADDR, portCOUNTER_0, XTC_CSR_ENABLE_TMR_MASK | XTC_CSR_ENABLE_INT_MASK | XTC_CSR_AUTO_RELOAD_MASK | XTC_CSR_DOWN_COUNT_MASK | XTC_CSR_INT_OCCURED_MASK );
 	XIntc_mAckIntr( XPAR_INTC_SINGLE_BASEADDR, 1 );
 }
 /*-----------------------------------------------------------*/
@@ -313,7 +313,7 @@ static unsigned long ulPending;
 		ulInterruptMask = ( unsigned long ) 1 << ulPending;
 
 		/* Get the configuration data using the device ID */
-		pxConfig = &XIntc_ConfigTable[ ( unsigned long ) XPAR_INTC_SINGLE_DEVICE_ID ];
+		//pxConfig = &XIntc_ConfigTable[ ( unsigned long ) XPAR_INTC_SINGLE_DEVICE_ID ];
 
 		pxTablePtr = &( pxConfig->HandlerTable[ ulPending ] );
 		if( pxConfig->AckBeforeService & ( ulInterruptMask  ) )
@@ -341,8 +341,8 @@ unsigned long ulCSR;
 	vTaskIncrementTick();
 
 	/* Clear the timer interrupt */
-	ulCSR = XTmrCtr_mGetControlStatusReg(XPAR_OPB_TIMER_1_BASEADDR, 0);	
-	XTmrCtr_mSetControlStatusReg( XPAR_OPB_TIMER_1_BASEADDR, portCOUNTER_0, ulCSR );
+	//ulCSR = XTmrCtr_mGetControlStatusReg(XPAR_OPB_TIMER_1_BASEADDR, 0);	
+	//XTmrCtr_mSetControlStatusReg( XPAR_OPB_TIMER_1_BASEADDR, portCOUNTER_0, ulCSR );
 
 	/* If we are using the preemptive scheduler then we also need to determine
 	if this tick should cause a context switch. */
