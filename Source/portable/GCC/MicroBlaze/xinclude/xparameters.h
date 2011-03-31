@@ -40,6 +40,23 @@
 
 /******************************************************************/
 
+/* Some defines that were missing (defined by me) */
+
+// for Partest.c
+#define XPAR_LEDS_4BIT_BASEADDR 0x80003200        
+#define XPAR_LEDS_POSITIONS_BASEADDR 0x80003300
+
+// for serial.c
+#define XPAR_RS232_UART_INTERRUPT_MASK 0X000001        
+#define XPAR_RS232_UART_BASEADDR 0x80003500
+
+// for port.c
+#define XPAR_OPB_TIMER_1_BASEADDR 0x80003600       
+#define XPAR_OPB_TIMER_1_DEVICE_ID 0
+#define XPAR_OPB_TIMER_1_INTERRUPT_MASK 0X000001
+
+
+/*****************************************************************/
 #define XPAR_XGPIO_NUM_INSTANCES 3
 #define XPAR_LEDS_8BIT_BASEADDR 0x80002200
 #define XPAR_LEDS_8BIT_HIGHADDR 0x800023FF
