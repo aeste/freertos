@@ -129,18 +129,18 @@ much stack at all. */
  * The task that executes at the highest priority and calls 
  * prvCheckOtherTasksAreStillRunning().  See the description at the top
  * of the file.
- */
+ *
 static void vErrorChecks( void *pvParameters );
 
 /*
  * Checks that all the demo application tasks are still executing without error
  * - as described at the top of the file.
- */
+ *
 static portBASE_TYPE prvCheckOtherTasksAreStillRunning( void );
 
 /*
  * The register test task as described at the top of this file.
- */
+ *
 static void vRegisterTest( void *pvParameters );
 
 /*
@@ -148,7 +148,7 @@ static void vRegisterTest( void *pvParameters );
  */
 static void prvSetupHardware( void );
 
-/* Set to pdFAIL should an error be discovered in the register test tasks. */
+/* Set to pdFAIL should an error be discovered in the register test tasks. *
 static unsigned long ulRegisterTestStatus = pdPASS;
 const unsigned long *pulStatusAddr = &ulRegisterTestStatus;
 
@@ -166,7 +166,7 @@ int main (void)
 
 	prvSetupHardware();
 
-	/* Start the standard demo application tasks. */
+	/* Start the standard demo application tasks. *
 	vStartLEDFlashTasks( mainLED_TASK_PRIORITY );
 	vAltStartComTestTasks( mainCOM_TEST_PRIORITY, mainBAUD_RATE, mainCOM_TEST_LED );
 	vStartIntegerMathTasks( tskIDLE_PRIORITY );
@@ -176,13 +176,13 @@ int main (void)
 	vStartPolledQueueTasks( mainQUEUE_POLL_PRIORITY );
 	
 	/* Create two register check tasks - using a different parameter for each.
-	The parameter is used to generate the known values written to the registers. */
+	The parameter is used to generate the known values written to the registers. *
 	#if configUSE_PREEMPTION == 1
 		xTaskCreate( vRegisterTest, "Reg1", mainTINY_STACK, ( void * ) 10, tskIDLE_PRIORITY, NULL );
 		xTaskCreate( vRegisterTest, "Reg2", mainTINY_STACK, ( void * ) 20, tskIDLE_PRIORITY, NULL );
 	#endif
 
-	/* Create the 'check' task that is defined in this file. */
+	/* Create the 'check' task that is defined in this file. *
 	xTaskCreate( vErrorChecks, "Check", configMINIMAL_STACK_SIZE, NULL, mainCHECK_TASK_PRIORITY, NULL );
 
 	/* Finally start the scheduler. */
@@ -193,39 +193,39 @@ int main (void)
 
    	return 0;
 }
-/*-----------------------------------------------------------*/
+/*-----------------------------------------------------------*
 
 static void vErrorChecks( void *pvParameters )
 {
 portTickType xDelayPeriod = mainNO_ERROR_CHECK_PERIOD;
 
-	/* The parameters are not used. */
+	/* The parameters are not used. *
 	( void ) pvParameters;
 
 	/* Cycle for ever, delaying then checking all the other tasks are still
 	operating without error.  The delay period used will depend on whether
-	or not an error has been discovered in one of the demo tasks. */
+	or not an error has been discovered in one of the demo tasks. *
 	for( ;; )
 	{
 		vTaskDelay( xDelayPeriod );
 		if( !prvCheckOtherTasksAreStillRunning() )
 		{
 			/* An error has been found.  Shorten the delay period to make
-			the LED flash faster. */
+			the LED flash faster. *
 			xDelayPeriod = mainERROR_CHECK_PERIOD;
 		}
 
 		vParTestToggleLED( mainCHECK_TASK_LED );
 	}
 }
-/*-----------------------------------------------------------*/
+/*-----------------------------------------------------------*
 
 static portBASE_TYPE prvCheckOtherTasksAreStillRunning( void )
 {
 static portBASE_TYPE xAllTestsPass = pdTRUE;
 
 	/* Return pdFALSE if any demo application task set has encountered
-	an error. */
+	an error. *
 
 	if( xAreIntegerMathsTaskStillRunning() != pdTRUE )
 	{
@@ -257,7 +257,7 @@ static portBASE_TYPE xAllTestsPass = pdTRUE;
 		xAllTestsPass = ( long ) pdFAIL;
 	}
 
-	/* Mutual exclusion on this variable is not necessary as we only read it. */
+	/* Mutual exclusion on this variable is not necessary as we only read it. *
 	if( ulRegisterTestStatus != pdPASS )
 	{
 		xAllTestsPass = pdFALSE;
@@ -273,10 +273,10 @@ static void prvSetupHardware( void )
 	code can successfully configure the peripherals. */
 	XIntc_mMasterEnable( XPAR_OPB_INTC_0_BASEADDR );
 
-	/* Initialise the GPIO used for the LED's. */
+	/* Initialise the GPIO used for the LED's. *
 	vParTestInitialise();
 }
-/*-----------------------------------------------------------*/
+/*-----------------------------------------------------------*
 
 static void vRegisterTest( void *pvParameters )
 {
@@ -284,7 +284,7 @@ static void vRegisterTest( void *pvParameters )
 	{
 		/* Fill the registers with their register number plus the offset 
 		(added) value.  The added value is passed in as a parameter so
-		is contained in r5. */
+		is contained in r5. *
 		asm volatile (	"addi r3, r5, 3		\n\t" \
 						"addi r4, r5, 4		\n\t" \
 						"addi r6, r5, 6		\n\t" \
@@ -314,20 +314,20 @@ static void vRegisterTest( void *pvParameters )
 
 		/* Now read back the register values to ensure they are as we expect. 
 		This task will get preempted frequently so other tasks are likely to
-		have executed since the register values were written. */
+		have executed since the register values were written. *
 
-		/* r3 should contain r5 + 3.  Subtract 3 to leave r3 equal to r5. */
+		/* r3 should contain r5 + 3.  Subtract 3 to leave r3 equal to r5. *
 		asm volatile (	"addi r3, r3, -3 " );
 
 		/* Compare r3 and r5.  If they are not equal then either r3 or r5
-		contains the wrong value and *pulStatusAddr is to pdFAIL. */
+		contains the wrong value and *pulStatusAddr is to pdFAIL. *
 		asm volatile (	"cmp r3, r3, r5				\n\t" \
 						"beqi r3, 12				\n\t" \
 						"lwi r3, r0, pulStatusAddr	\n\t" \
 						"sw	r0, r0, r3				\n\t" 
 					 );
 
-		/* Repeat for all the other registers. */
+		/* Repeat for all the other registers. *
 		asm volatile ( 	"addi r4, r4, -4			\n\t" \
 						"cmp r4, r4, r5				\n\t" \
 						"beqi r4, 12				\n\t" \
@@ -452,6 +452,6 @@ static void vRegisterTest( void *pvParameters )
 					);
 	}
 }
-
+*/
 
 
