@@ -68,6 +68,9 @@
 #include <xintc_i.h>
 #include <xtmrctr.h>
 
+/*added by me */
+#include "xinclude/xparameters.h"
+
 /* Tasks are started with interrupts enabled. */
 #define portINITIAL_MSR_STATE		( ( portSTACK_TYPE ) 0x02 )
 
