@@ -57,16 +57,16 @@
 
 
 /* Scheduler includes. */
-#include "FreeRTOS.h"
-#include "task.h"
+#include "../../../../Source/include/FreeRTOS.h"
+#include "../../../../Source/include/task.h"
 
 /* Standard includes. */
 #include <string.h>
 
 /* Hardware includes. */
-#include <xintc.h>
-#include <xintc_i.h>
-#include <xtmrctr.h>
+#include "xinclude/xintc.h"
+#include "xinclude/xintc_i.h"
+#include "xinclude/xtmrctr.h"
 
 /*added by me */
 #include "xinclude/xparameters.h"
