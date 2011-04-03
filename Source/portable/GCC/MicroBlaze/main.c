@@ -78,10 +78,10 @@
  */
 
 /* Scheduler includes. */
-#include "FreeRTOS.h"
-#include "task.h"
+#include "../../../../Source/include/FreeRTOS.h"
+#include "../../../../Source/include/task.h"
 
-/* Demo application includes. */
+/* Demo application includes. *
 #include "partest.h"
 #include "flash.h"
 #include "comtest2.h"
@@ -92,7 +92,7 @@
 #include "PollQ.h"
 
 /* Hardware library includes. */
-#include <xintc.h>
+#include "../../../../Source/portable/GCC/MicroBlaze/xinclude/xintc.h"
 
 /* The rate at which the 'check' LED will flash when no errors have been
 detected. */
@@ -273,8 +273,8 @@ static void prvSetupHardware( void )
 	code can successfully configure the peripherals. */
 	XIntc_mMasterEnable( XPAR_OPB_INTC_0_BASEADDR );
 
-	/* Initialise the GPIO used for the LED's. *
-	vParTestInitialise();
+	/* Initialise the GPIO used for the LED's. */
+	//vParTestInitialise();
 }
 /*-----------------------------------------------------------*
 
