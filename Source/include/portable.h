@@ -195,7 +195,7 @@
 #endif	
 
 #ifdef MICROBLAZE_GCC
-	#include "../../Source/portable/GCC/MicroBlaze/portmacro.h"
+	#include "portmacro.h"
 #endif
 
 #ifdef TERN_EE
