@@ -92,7 +92,7 @@
 #include "PollQ.h"
 
 /* Hardware library includes. */
-#include "../../../../Source/portable/GCC/MicroBlaze/xinclude/xintc.h"
+//#include "../../../../Source/portable/GCC/MicroBlaze/xinclude/xintc.h"
 
 /* The rate at which the 'check' LED will flash when no errors have been
 detected. */
@@ -271,7 +271,7 @@ static void prvSetupHardware( void )
 {
 	/* Ensure the interrupt controller is enabled in order that subsequent 
 	code can successfully configure the peripherals. */
-	XIntc_mMasterEnable( XPAR_OPB_INTC_0_BASEADDR );
+	//XIntc_mMasterEnable( XPAR_OPB_INTC_0_BASEADDR );
 
 	/* Initialise the GPIO used for the LED's. */
 	//vParTestInitialise();

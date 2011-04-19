@@ -54,7 +54,7 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-#include "../portable/GCC/MicroBlaze/xinclude/xparameters.h"
+//#include "../portable/GCC/MicroBlaze/xinclude/xparameters.h"
 
 /*-----------------------------------------------------------
  * Application specific definitions.

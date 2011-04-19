@@ -195,7 +195,12 @@
 #endif	
 
 #ifdef MICROBLAZE_GCC
-	#include "portmacro.h"
+	#include "../../Source/portable/GCC/MicroBlaze/portmacro.h"
+#endif
+
+// header definition for aeMB 
+#ifdef __MICROBLAZE__
+	#include "../../Source/portable/GCC/aeMB/aeinclude/portmacro.h"
 #endif
 
 #ifdef TERN_EE
