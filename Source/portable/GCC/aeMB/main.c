@@ -77,6 +77,11 @@
  *
  */
 
+#include <stdlib.h>
+
+/* Core includes */
+#include "aeinclude/core.hh"
+
 /* Scheduler includes. */
 #include "../../../../Source/include/FreeRTOS.h"
 #include "../../../../Source/include/task.h"
