@@ -51,66 +51,79 @@
     licensing and training services.
 */
 
-
 /*
- * Implementation of pvPortMalloc() and vPortFree() that relies on the
- * compilers own malloc() and free() implementations.
+ * Creates all the demo application tasks, then starts the scheduler.  The WEB
+ * documentation provides more details of the standard demo application tasks.
  *
- * This file can only be used if the linker is configured to to generate
- * a heap memory area.
+ * In addition to the standard tasks, main() creates two "Register Check" 
+ * tasks.  These tasks write known values into every general purpose register,
+ * then check each register to ensure it still contains the expected (written)
+ * value.  The register check tasks operate at the idle priority so will get
+ * repeatedly preempted.  A register being found to contain an incorrect value
+ * following such a preemption would be indicative of an error in the context
+ * switch mechanism.
+ * 
+ * Main.c also creates a task called "Check".  This only executes every three 
+ * seconds but has the highest priority so is guaranteed to get processor time.  
+ * Its main function is to check that all the other tasks are still operational.
+ * Each task (other than the "flash" tasks) maintains a unique count that is 
+ * incremented each time the task successfully completes its function.  Should 
+ * any error occur within such a task the count is permanently halted.  The 
+ * check task inspects the count of each task to ensure it has changed since
+ * the last time the check task executed.  If all the count variables have 
+ * changed all the tasks are still executing error free, and the check task
+ * toggles the onboard LED.  Should any task contain an error at any time 
+ * the LED toggle rate will change from 3 seconds to 500ms.
  *
- * See heap_2.c and heap_1.c for alternative implementations, and the memory
- * management pages of http://www.FreeRTOS.org for more information.
  */
 
 #include <stdlib.h>
 
-/* Defining MPU_WRAPPERS_INCLUDED_FROM_API_FILE prevents task.h from redefining
-all the API functions to use the MPU wrappers.  That should only be done when
-task.h is included from an application file. */
-#define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+/* Core includes */
+#include "aeinclude/core.hh"
 
-#include "../../include/FreeRTOS.h"
-#include "../../include/task.h"
+/* Scheduler includes. */
+#include "../../../../Source/include/FreeRTOS.h"
+#include "../../../../Source/include/task.h"
 
-#undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+
+/*
+ * Perform any necessary hardware configuration.
+ */
+static void prvSetupHardware( void );
+
+/* Set to pdFAIL should an error be discovered in the register test tasks. *
+static unsigned long ulRegisterTestStatus = pdPASS;
+const unsigned long *pulStatusAddr = &ulRegisterTestStatus;
 
 /*-----------------------------------------------------------*/
 
-void *pvPortMalloc( size_t xWantedSize )
+/*
+ * Create all the demo tasks - then start the scheduler.
+ */
+int main (void) 
 {
-void *pvReturn;
+	/* When re-starting a debug session (rather than cold booting) we want
+	to ensure the installed interrupt handlers do not execute until after the
+	scheduler has been started. */
+	portDISABLE_INTERRUPTS();
 
-	vTaskSuspendAll();
-	{
-		pvReturn = malloc( xWantedSize );
-	}
-	xTaskResumeAll();
+	prvSetupHardware();
 
-	#if( configUSE_MALLOC_FAILED_HOOK == 1 )
-	{
-		if( pvReturn == NULL )
-		{
-			extern void vApplicationMallocFailedHook( void );
-			vApplicationMallocFailedHook();
-		}
-	}
-	#endif
 	
-	return pvReturn;
-}
-/*-----------------------------------------------------------*/
+	/* Finally start the scheduler. */
+	vTaskStartScheduler();
 
-void vPortFree( void *pv )
+	/* Should not get here as the processor is now under control of the 
+	scheduler! */
+
+   	return 0;
+}
+
+
+static void prvSetupHardware( void )
 {
-	if( pv )
-	{
-		vTaskSuspendAll();
-		{
-			free( pv );
-		}
-		xTaskResumeAll();
-	}
+	
 }
 
 

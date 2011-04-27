@@ -51,67 +51,94 @@
     licensing and training services.
 */
 
+#ifndef PORTMACRO_H
+#define PORTMACRO_H
 
-/*
- * Implementation of pvPortMalloc() and vPortFree() that relies on the
- * compilers own malloc() and free() implementations.
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*-----------------------------------------------------------
+ * Port specific definitions.  
  *
- * This file can only be used if the linker is configured to to generate
- * a heap memory area.
+ * The settings in this file configure FreeRTOS correctly for the
+ * given hardware and compiler.
  *
- * See heap_2.c and heap_1.c for alternative implementations, and the memory
- * management pages of http://www.FreeRTOS.org for more information.
+ * These settings should not be altered.
+ *-----------------------------------------------------------
  */
 
-#include <stdlib.h>
+/* Type definitions. */
+#define portCHAR		char
+#define portFLOAT		float
+#define portDOUBLE		double
+#define portLONG		long
+#define portSHORT		short
+#define portSTACK_TYPE	unsigned portLONG
+#define portBASE_TYPE	portLONG
 
-/* Defining MPU_WRAPPERS_INCLUDED_FROM_API_FILE prevents task.h from redefining
-all the API functions to use the MPU wrappers.  That should only be done when
-task.h is included from an application file. */
-#define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+#if( configUSE_16_BIT_TICKS == 1 )
+	typedef unsigned portSHORT portTickType;
+	#define portMAX_DELAY ( portTickType ) 0xffff
+#else
+	typedef unsigned portLONG portTickType;
+	#define portMAX_DELAY ( portTickType ) 0xffffffff
+#endif
+/*-----------------------------------------------------------*/	
 
-#include "../../include/FreeRTOS.h"
-#include "../../include/task.h"
+/* Interrupt control macros. */
+inline int aembDisableInterrupts();
+inline int aembEnableInterrupts();
+#define portDISABLE_INTERRUPTS()	aembDisableInterrupts()
+#define portENABLE_INTERRUPTS()		aembEnableInterrupts()
+/*-----------------------------------------------------------*/
 
-#undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+/* Critical section macros. */
+void vPortEnterCritical( void );
+void vPortExitCritical( void );
+#define portENTER_CRITICAL()		{														\
+										extern unsigned portBASE_TYPE uxCriticalNesting;	\
+										aembDisableInterrupts();					\
+										uxCriticalNesting++;								\
+									}
+									
+#define portEXIT_CRITICAL()			{														\
+										extern unsigned portBASE_TYPE uxCriticalNesting;	\
+										/* Interrupts are disabled, so we can */			\
+										/* access the variable directly. */					\
+										uxCriticalNesting--;								\
+										if( uxCriticalNesting == 0 )			\
+										{													\
+											/* The nesting has unwound and we 				\
+											can enable interrupts again. */					\
+											portENABLE_INTERRUPTS();						\
+										}													\
+									}
 
 /*-----------------------------------------------------------*/
 
-void *pvPortMalloc( size_t xWantedSize )
-{
-void *pvReturn;
+/* Task utilities. */
+void vPortYield( void );
+#define portYIELD() vPortYield()
 
-	vTaskSuspendAll();
-	{
-		pvReturn = malloc( xWantedSize );
-	}
-	xTaskResumeAll();
-
-	#if( configUSE_MALLOC_FAILED_HOOK == 1 )
-	{
-		if( pvReturn == NULL )
-		{
-			extern void vApplicationMallocFailedHook( void );
-			vApplicationMallocFailedHook();
-		}
-	}
-	#endif
-	
-	return pvReturn;
-}
+void vTaskSwitchContext();
+#define portYIELD_FROM_ISR() vTaskSwitchContext()
 /*-----------------------------------------------------------*/
 
-void vPortFree( void *pv )
-{
-	if( pv )
-	{
-		vTaskSuspendAll();
-		{
-			free( pv );
-		}
-		xTaskResumeAll();
-	}
+/* Hardware specifics. */
+#define portBYTE_ALIGNMENT			4
+#define portSTACK_GROWTH			( -1 )
+#define portTICK_RATE_MS			( ( portTickType ) 1000 / configTICK_RATE_HZ )		
+#define portNOP()					asm volatile ( "NOP" )
+/*-----------------------------------------------------------*/
+
+/* Task function macros as described on the FreeRTOS.org WEB site. */
+#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
+#define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
+
+#ifdef __cplusplus
 }
+#endif
 
-
+#endif /* PORTMACRO_H */
 

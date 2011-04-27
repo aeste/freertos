@@ -64,7 +64,7 @@
 #include "../../Source/include/projdefs.h"
 
 /* Application specific configuration options. */
-#include "../../Source/include/FreeRTOSConfig.h"
+#include "../../Source/portable/GCC/aeMB/aeinclude/FreeRTOSConfig.h"
 
 /* Definitions specific to the port being used. */
 #include "../../Source/include/portable.h"
