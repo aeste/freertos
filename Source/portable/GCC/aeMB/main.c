@@ -78,9 +78,11 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 /* Core includes */
 #include "aeinclude/core.hh"
+#include "aeinclude/simboard.hh"
 
 /* Scheduler includes. */
 #include "../../../../Source/include/FreeRTOS.h"
@@ -109,7 +111,8 @@ int main (void)
 	portDISABLE_INTERRUPTS();
 
 	prvSetupHardware();
-
+	
+	printf("\n\n\t\t...... Hello FreeRTOS .....\n\n");
 	
 	/* Finally start the scheduler. */
 	vTaskStartScheduler();
