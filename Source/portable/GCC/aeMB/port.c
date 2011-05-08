@@ -72,7 +72,7 @@
 //#include "xinclude/xparameters.h"
 
 /* Tasks are started with interrupts enabled. */
-#define portINITIAL_MSR_STATE		( ( portSTACK_TYPE ) 0x02 )
+#define portINITIAL_MSR_STATE		( ( portSTACK_TYPE ) 0x00 )
 
 /* Tasks are started with a critical section nesting of 0 - however prior
 to the scheduler being commenced we don't want the critical nesting level
