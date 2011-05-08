@@ -103,22 +103,39 @@ const unsigned long *pulStatusAddr = &ulRegisterTestStatus;
 /*
  * Create all the demo tasks - then start the scheduler.
  */
+void vTestTask( void *pvParameters )
+{
+        
+	printf("\n\t\t---Test Task is running---\n\n");
+
+   // Because FreeRTOS tasks are implemented as an infinite loop	
+	while(1);
+}
+
+
+
 int main (void) 
 {
+
+portBASE_TYPE FIReturn;
 	/* When re-starting a debug session (rather than cold booting) we want
 	to ensure the installed interrupt handlers do not execute until after the
 	scheduler has been started. */
 	portDISABLE_INTERRUPTS();
 
-	prvSetupHardware();
+	FIReturn = xTaskCreate( vTestTask, "T0",   1000, NULL,1 , NULL );
 	
-	printf("\n\n\t\t...... Hello FreeRTOS .....\n\n");
+	if( FIReturn == pdPASS )
+	{
 	
-	/* Finally start the scheduler. */
+		printf("\n\n\t --- Stack Memory Allocation passed! ---\n\n");
+	}
+	else {
+		printf("\n\n ------- Stack Memory Allocation failed! --------\n\n");
+	}
+	
 	vTaskStartScheduler();
 
-	/* Should not get here as the processor is now under control of the 
-	scheduler! */
 
    	return 0;
 }
@@ -128,6 +145,4 @@ static void prvSetupHardware( void )
 {
 	
 }
-
-
 
