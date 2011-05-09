@@ -13,4 +13,4 @@ mb-objcopy -O srec a.out a.srec
 srec_cat a.srec -o ../../../../../aemb/sim/dump.vmem -vmem 32
 
 # Remove all the object files and srecord files
-rm -f a.srec
+rm -f *.o a.srec
