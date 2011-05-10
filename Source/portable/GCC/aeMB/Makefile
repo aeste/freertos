@@ -14,11 +14,11 @@ Cheap_1 = ../../../../Source/portable/MemMang/heap_1.c
 Cheap_2 = ../../../../Source/portable/MemMang/heap_2.c
 Cheap_3 = ../../../../Source/portable/MemMang/heap_3.c
 #.......................................................
-
+#-Wl,-defsym -Wl,_STACK_SIZE=0x400 -Wl,-defsym -Wl,_HEAP_SIZE=0x8000
 
 
 compile: main.o list.o queue.o tasks.o port.o portasm.o heap_3.o
-	mb-gcc -Wl,-defsym -Wl,_STACK_SIZE=0x100 -Wl,-defsym -Wl,_HEAP_SIZE=0x8000 *.o -O1
+	mb-gcc -Wl,-defsym -Wl,_HEAP_SIZE=0x8000 -mtune=v5.00 -mxl-soft-div -msoft-float -mxl-barrel-shift -mno-xl-soft-mul *.o -O1
 
 main.o: main.c $(HFreeRTOS) $(Htask)
 	mb-gcc -mtune=v5.00 -mxl-soft-div -msoft-float -mxl-barrel-shift -mno-xl-soft-mul -c main.c -O1

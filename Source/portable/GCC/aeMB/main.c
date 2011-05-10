@@ -78,9 +78,11 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 /* Core includes */
 #include "aeinclude/core.hh"
+#include "aeinclude/simboard.hh"
 
 /* Scheduler includes. */
 #include "../../../../Source/include/FreeRTOS.h"
@@ -101,30 +103,58 @@ const unsigned long *pulStatusAddr = &ulRegisterTestStatus;
 /*
  * Create all the demo tasks - then start the scheduler.
  */
+
+void vTestTask1( void *pvParameters );
+void vTestTask2( void *pvParameters );
+
+
 int main (void) 
 {
+
+
 	/* When re-starting a debug session (rather than cold booting) we want
 	to ensure the installed interrupt handlers do not execute until after the
 	scheduler has been started. */
 	portDISABLE_INTERRUPTS();
 
-	prvSetupHardware();
-
+	xTaskCreate( vTestTask1, "T1",   1000, NULL,1 , NULL );
+	xTaskCreate( vTestTask2, "T2",   1000, NULL,1 , NULL );
 	
-	/* Finally start the scheduler. */
+	printf("\n\ncommencing the scheduler ... \n\n");
+	
+	
 	vTaskStartScheduler();
 
-	/* Should not get here as the processor is now under control of the 
-	scheduler! */
 
    	return 0;
 }
+
+
+void vTestTask1( void *pvParameters )
+{
+    for (;;)
+	{	
+		printf("Task 1 running\n");
+
+    		taskYIELD();
+    	}
+}
+
+void vTestTask2( void *pvParameters )
+{
+    for (;;)
+	{
+		printf("Task 2 running\n");
+
+		taskYIELD();
+	}
+}
+
+
 
 
 static void prvSetupHardware( void )
 {
 	
 }
-
-
 
