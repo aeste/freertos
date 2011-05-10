@@ -61,13 +61,13 @@
 #include <stddef.h>
 
 /* Basic FreeRTOS definitions. */
-#include "projdefs.h"
+#include "../../Source/include/projdefs.h"
 
 /* Application specific configuration options. */
-#include "FreeRTOSConfig.h"
+#include "../../Source/portable/GCC/aeMB/aeinclude/FreeRTOSConfig.h"
 
 /* Definitions specific to the port being used. */
-#include "portable.h"
+#include "../../Source/include/portable.h"
 
 
 /* Defines the prototype to which the application task hook function must

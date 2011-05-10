@@ -59,9 +59,9 @@ all the API functions to use the MPU wrappers.  That should only be done when
 task.h is included from an application file. */
 #define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
 
-#include "FreeRTOS.h"
-#include "task.h"
-#include "croutine.h"
+#include "include/FreeRTOS.h"
+#include "include/task.h"
+#include "include/croutine.h"
 
 #undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
 
@@ -353,6 +353,7 @@ size_t xQueueSizeInBytes;
 		pxMutexHolder can never coincidentally equal the tasks handle, and as
 		this is the only condition we are interested in it does not matter if
 		pxMutexHolder is accessed simultaneously by another task.  Therefore no
+
 		mutual exclusion is required to test the pxMutexHolder variable. */
 		if( pxMutex->pxMutexHolder == xTaskGetCurrentTaskHandle() )
 		{

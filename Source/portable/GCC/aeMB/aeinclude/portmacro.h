@@ -51,63 +51,94 @@
     licensing and training services.
 */
 
-#ifndef PORT_ASM_H
-#define PORT_ASM_H
+#ifndef PORTMACRO_H
+#define PORTMACRO_H
 
-typedef void tskTCB;
-extern volatile tskTCB * volatile pxCurrentTCB;
-extern void vTaskSwitchContext( void );
-
-/*
- * Saves the stack pointer for one task into its TCB, calls
- * vTaskSwitchContext() to update the TCB being used, then restores the stack
- * from the new TCB read to run the task.
- */
-void portSWITCH_CONTEXT( void );
-
-/*
- * Load the stack pointer from the TCB of the task which is going to be first
- * to execute.  Then force an IRET so the registers and IP are popped off the
- * stack.
- */
-void portFIRST_CONTEXT( void );
-
-/* There are slightly different versions depending on whether you are building
-to include debugger information.  If debugger information is used then there
-are a couple of extra bytes left of the ISR stack (presumably for use by the
-debugger).  The true stack pointer is then stored in the bp register.  We add
-2 to the stack pointer to remove the extra bytes before we restore our context. */
-
-#define portSWITCH_CONTEXT()											\
-							asm { mov	ax, seg pxCurrentTCB		}	\
-							asm { mov	ds, ax						}	\
-							asm { les	bx, pxCurrentTCB			}	/* Save the stack pointer into the TCB. */		\
-							asm { mov	es:0x2[ bx ], ss			}	\
-							asm { mov	es:[ bx ], sp				}	\
-							asm { call  far ptr vTaskSwitchContext	}	/* Perform the switch. */						\
-							asm { mov	ax, seg pxCurrentTCB		}	/* Restore the stack pointer from the TCB. */	\
-							asm { mov	ds, ax						}	\
-							asm { les	bx, dword ptr pxCurrentTCB	}	\
-							asm { mov	ss, es:[ bx + 2 ]			}	\
-							asm { mov	sp, es:[ bx ]				}
-
-#define portFIRST_CONTEXT()												\
-							__asm { mov	ax, seg pxCurrentTCB		}	\
-							__asm { mov	ds, ax						}	\
-							__asm { les	bx, dword ptr pxCurrentTCB	}	\
-							__asm { mov	ss, es:[ bx + 2 ]			}	\
-							__asm { mov	sp, es:[ bx ]				}	\
-							__asm { pop	bp							}	\
-							__asm { pop	di							}	\
-							__asm { pop	si							}	\
-							__asm { pop	ds							}	\
-							__asm { pop	es							}	\
-							__asm { pop	dx							}	\
-							__asm { pop	cx							}	\
-							__asm { pop	bx							}	\
-							__asm { pop	ax							}	\
-							__asm { iret							}
-
-
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+/*-----------------------------------------------------------
+ * Port specific definitions.  
+ *
+ * The settings in this file configure FreeRTOS correctly for the
+ * given hardware and compiler.
+ *
+ * These settings should not be altered.
+ *-----------------------------------------------------------
+ */
+
+/* Type definitions. */
+#define portCHAR		char
+#define portFLOAT		float
+#define portDOUBLE		double
+#define portLONG		long
+#define portSHORT		short
+#define portSTACK_TYPE	unsigned portLONG
+#define portBASE_TYPE	portLONG
+
+#if( configUSE_16_BIT_TICKS == 1 )
+	typedef unsigned portSHORT portTickType;
+	#define portMAX_DELAY ( portTickType ) 0xffff
+#else
+	typedef unsigned portLONG portTickType;
+	#define portMAX_DELAY ( portTickType ) 0xffffffff
+#endif
+/*-----------------------------------------------------------*/	
+
+/* Interrupt control macros. */
+inline int aembDisableInterrupts();
+inline int aembEnableInterrupts();
+#define portDISABLE_INTERRUPTS()	aembDisableInterrupts()
+#define portENABLE_INTERRUPTS()		aembEnableInterrupts()
+/*-----------------------------------------------------------*/
+
+/* Critical section macros. */
+void vPortEnterCritical( void );
+void vPortExitCritical( void );
+#define portENTER_CRITICAL()		{														\
+										extern unsigned portBASE_TYPE uxCriticalNesting;	\
+										aembDisableInterrupts();					\
+										uxCriticalNesting++;								\
+									}
+									
+#define portEXIT_CRITICAL()			{														\
+										extern unsigned portBASE_TYPE uxCriticalNesting;	\
+										/* Interrupts are disabled, so we can */			\
+										/* access the variable directly. */					\
+										uxCriticalNesting--;								\
+										if( uxCriticalNesting == 0 )			\
+										{													\
+											/* The nesting has unwound and we 				\
+											can enable interrupts again. */					\
+											portENABLE_INTERRUPTS();						\
+										}													\
+									}
+
+/*-----------------------------------------------------------*/
+
+/* Task utilities. */
+void vPortYield( void );
+#define portYIELD() vPortYield()
+
+void vTaskSwitchContext();
+#define portYIELD_FROM_ISR() vTaskSwitchContext()
+/*-----------------------------------------------------------*/
+
+/* Hardware specifics. */
+#define portBYTE_ALIGNMENT			4
+#define portSTACK_GROWTH			( -1 )
+#define portTICK_RATE_MS			( ( portTickType ) 1000 / configTICK_RATE_HZ )		
+#define portNOP()					asm volatile ( "NOP" )
+/*-----------------------------------------------------------*/
+
+/* Task function macros as described on the FreeRTOS.org WEB site. */
+#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
+#define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* PORTMACRO_H */
 

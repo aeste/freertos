@@ -51,69 +51,50 @@
     licensing and training services.
 */
 
-#ifndef PORTMACRO_H
-#define PORTMACRO_H
+#ifndef FREERTOS_CONFIG_H
+#define FREERTOS_CONFIG_H
+
+//#include "../portable/GCC/MicroBlaze/xinclude/xparameters.h"
 
 /*-----------------------------------------------------------
- * Port specific definitions.  
+ * Application specific definitions.
  *
- * The settings in this file configure FreeRTOS correctly for the
- * given hardware and compiler.
+ * These definitions should be adjusted for your particular hardware and
+ * application requirements.
  *
- * These settings should not be altered.
- *-----------------------------------------------------------
- */
+ * THESE PARAMETERS ARE DESCRIBED WITHIN THE 'CONFIGURATION' SECTION OF THE
+ * FreeRTOS API DOCUMENTATION AVAILABLE ON THE FreeRTOS.org WEB SITE. 
+ *
+ * See http://www.freertos.org/a00110.html.
+ *----------------------------------------------------------*/
 
-/* Type definitions. */
-#define portCHAR		char
-#define portFLOAT		float
-#define portDOUBLE		long
-#define portLONG		long
-#define portSHORT		int
-#define portSTACK_TYPE	unsigned portSHORT
-#define portBASE_TYPE	portSHORT
+#define configUSE_PREEMPTION		0
+#define configUSE_IDLE_HOOK			0
+#define configUSE_TICK_HOOK			0
+#define configCPU_CLOCK_HZ			( ( unsigned long ) 100000000 )
+#define configTICK_RATE_HZ			( ( portTickType ) 1000 )
+#define configMAX_PRIORITIES		( ( unsigned portBASE_TYPE ) 4 )
+#define configMINIMAL_STACK_SIZE	( ( unsigned short ) 120 )
+#define configTOTAL_HEAP_SIZE		( ( size_t ) ( 18 * 1024 ) )
+#define configMAX_TASK_NAME_LEN		( 5 )
+#define configUSE_TRACE_FACILITY	0
+#define configUSE_16_BIT_TICKS		0
+#define configIDLE_SHOULD_YIELD		0
 
-#if( configUSE_16_BIT_TICKS == 1 )
-	typedef unsigned portSHORT portTickType;
-	#define portMAX_DELAY ( portTickType ) 0xffff
-#else
-	typedef unsigned portLONG portTickType;
-	#define portMAX_DELAY ( portTickType ) 0xffffffff
-#endif
-/*-----------------------------------------------------------*/
+/* Co-routine definitions. */
+#define configUSE_CO_ROUTINES 		0
+#define configMAX_CO_ROUTINE_PRIORITIES ( 2 )
 
-/* Critical section handling. */
-#define portENTER_CRITICAL()			__asm{ pushf }  \
-										__asm{ cli 	 }	\
+/* Set the following definitions to 1 to include the API function, or zero
+to exclude the API function. */
 
-#define portEXIT_CRITICAL()				__asm{ popf }
+#define INCLUDE_vTaskPrioritySet		1
+#define INCLUDE_uxTaskPriorityGet		1
+#define INCLUDE_vTaskDelete				0
+#define INCLUDE_vTaskCleanUpResources	0
+#define INCLUDE_vTaskSuspend			1
+#define INCLUDE_vTaskDelayUntil			1
+#define INCLUDE_vTaskDelay				1
 
-#define portDISABLE_INTERRUPTS()		__asm{ cli }
 
-#define portENABLE_INTERRUPTS()			__asm{ sti }
-/*-----------------------------------------------------------*/
-
-/* Hardware specifics. */
-#define portNOP()						__asm{ nop }
-#define portSTACK_GROWTH				( -1 )
-#define portSWITCH_INT_NUMBER 			0x80
-#define portYIELD()						__asm{ int portSWITCH_INT_NUMBER } 
-#define portTICK_RATE_MS		( ( portTickType ) 1000 / configTICK_RATE_HZ )		
-#define portBYTE_ALIGNMENT      2
-#define portINITIAL_SW		( ( portSTACK_TYPE ) 0x0202 )	/* Start the tasks with interrupts enabled. */
-/*-----------------------------------------------------------*/
-
-/* Compiler specifics. */
-#define portINPUT_BYTE( xAddr )				inp( xAddr )
-#define portOUTPUT_BYTE( xAddr, ucValue )	outp( xAddr, ucValue )
-#define portINPUT_WORD( xAddr )				inpw( xAddr )
-#define portOUTPUT_WORD( xAddr, usValue )	outpw( xAddr, usValue )
-
-/*-----------------------------------------------------------*/
-
-/* Task function macros as described on the FreeRTOS.org WEB site. */
-#define portTASK_FUNCTION_PROTO( vTaskFunction, vParameters ) void vTaskFunction( void *pvParameters )
-#define portTASK_FUNCTION( vTaskFunction, vParameters ) void vTaskFunction( void *pvParameters )
-
-#endif /* PORTMACRO_H */
-
+#endif /* FREERTOS_CONFIG_H */

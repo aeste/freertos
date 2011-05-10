@@ -52,95 +52,109 @@
 */
 
 /*
-Changes from V1.00:
+ * Creates all the demo application tasks, then starts the scheduler.  The WEB
+ * documentation provides more details of the standard demo application tasks.
+ *
+ * In addition to the standard tasks, main() creates two "Register Check" 
+ * tasks.  These tasks write known values into every general purpose register,
+ * then check each register to ensure it still contains the expected (written)
+ * value.  The register check tasks operate at the idle priority so will get
+ * repeatedly preempted.  A register being found to contain an incorrect value
+ * following such a preemption would be indicative of an error in the context
+ * switch mechanism.
+ * 
+ * Main.c also creates a task called "Check".  This only executes every three 
+ * seconds but has the highest priority so is guaranteed to get processor time.  
+ * Its main function is to check that all the other tasks are still operational.
+ * Each task (other than the "flash" tasks) maintains a unique count that is 
+ * incremented each time the task successfully completes its function.  Should 
+ * any error occur within such a task the count is permanently halted.  The 
+ * check task inspects the count of each task to ensure it has changed since
+ * the last time the check task executed.  If all the count variables have 
+ * changed all the tasks are still executing error free, and the check task
+ * toggles the onboard LED.  Should any task contain an error at any time 
+ * the LED toggle rate will change from 3 seconds to 500ms.
+ *
+ */
 
-	+ pxPortInitialiseStack() now initialises the stack of new tasks to the
-	  same format used by the compiler.  This allows the compiler generated
-	  interrupt mechanism to be used for context switches.
-
-Changes from V2.6.1
-
-	+ Move usPortCheckFreeStackSpace() to tasks.c.
-*/
-
-
-#include <dos.h>
 #include <stdlib.h>
-#include "FreeRTOS.h"
+#include <stdio.h>
+
+/* Core includes */
+#include "aeinclude/core.hh"
+#include "aeinclude/simboard.hh"
+
+/* Scheduler includes. */
+#include "../../../../Source/include/FreeRTOS.h"
+#include "../../../../Source/include/task.h"
+
+
+/*
+ * Perform any necessary hardware configuration.
+ */
+static void prvSetupHardware( void );
+
+/* Set to pdFAIL should an error be discovered in the register test tasks. *
+static unsigned long ulRegisterTestStatus = pdPASS;
+const unsigned long *pulStatusAddr = &ulRegisterTestStatus;
 
 /*-----------------------------------------------------------*/
 
-/* See header file for description. */
-portSTACK_TYPE *pxPortInitialiseStack( portSTACK_TYPE *pxTopOfStack, pdTASK_CODE pxCode, void *pvParameters )
+/*
+ * Create all the demo tasks - then start the scheduler.
+ */
+
+void vTestTask1( void *pvParameters );
+void vTestTask2( void *pvParameters );
+
+
+int main (void) 
 {
-portSTACK_TYPE DS_Reg = 0;
-
-	/* Place a few bytes of known values on the bottom of the stack.
-	This is just useful for debugging. */
-
-	*pxTopOfStack = 0x1111;
-	pxTopOfStack--;
-	*pxTopOfStack = 0x2222;
-	pxTopOfStack--;
-	*pxTopOfStack = 0x3333;
-	pxTopOfStack--;
-	*pxTopOfStack = 0x4444;
-	pxTopOfStack--;
-	*pxTopOfStack = 0x5555;
-	pxTopOfStack--;
 
 
-	/*lint -e950 -e611 -e923 Lint doesn't like this much - but nothing I can do about it. */
+	/* When re-starting a debug session (rather than cold booting) we want
+	to ensure the installed interrupt handlers do not execute until after the
+	scheduler has been started. */
+	portDISABLE_INTERRUPTS();
 
-	/* We are going to start the scheduler using a return from interrupt
-	instruction to load the program counter, so first there would be the
-	function call with parameters preamble. */
+	xTaskCreate( vTestTask1, "T1",   1000, NULL,1 , NULL );
+	xTaskCreate( vTestTask2, "T2",   1000, NULL,1 , NULL );
 	
-	*pxTopOfStack = FP_SEG( pvParameters );
-	pxTopOfStack--;
-	*pxTopOfStack = FP_OFF( pvParameters );
-	pxTopOfStack--;
-	*pxTopOfStack = FP_SEG( pxCode );
-	pxTopOfStack--;
-	*pxTopOfStack = FP_OFF( pxCode );
-	pxTopOfStack--;
+	printf("\n\ncommencing the scheduler ... \n\n");
+	
+	
+	vTaskStartScheduler();
 
-	/* Next the status register and interrupt return address. */
-	*pxTopOfStack = portINITIAL_SW; 
-	pxTopOfStack--;
-	*pxTopOfStack = FP_SEG( pxCode );
-	pxTopOfStack--;
-	*pxTopOfStack = FP_OFF( pxCode );
-	pxTopOfStack--;
 
-	/* The remaining registers would be pushed on the stack by our context
-	switch function.  These are loaded with values simply to make debugging
-	easier. */
-	*pxTopOfStack = ( portSTACK_TYPE ) 0xAAAA;	/* AX */
-	pxTopOfStack--;
-	*pxTopOfStack = ( portSTACK_TYPE ) 0xBBBB;	/* BX */
-	pxTopOfStack--;
-	*pxTopOfStack = ( portSTACK_TYPE ) 0xCCCC;	/* CX */
-	pxTopOfStack--;
-	*pxTopOfStack = ( portSTACK_TYPE ) 0xDDDD;	/* DX */
-	pxTopOfStack--;
-	*pxTopOfStack = ( portSTACK_TYPE ) 0xEEEE;	/* ES */
-	pxTopOfStack--;
-
-	/* We need the true data segment. */
-	__asm{	MOV DS_Reg, DS };
-
-	*pxTopOfStack = DS_Reg;						/* DS */
-	pxTopOfStack--;
-	*pxTopOfStack = ( portSTACK_TYPE ) 0x0123;	/* SI */
-	pxTopOfStack--;
-	*pxTopOfStack = ( portSTACK_TYPE ) 0xDDDD;	/* DI */
-	pxTopOfStack--;
-	*pxTopOfStack = ( portSTACK_TYPE ) 0xBBBB;	/* BP */
-
-	/*lint +e950 +e611 +e923 */
-
-	return pxTopOfStack;
+   	return 0;
 }
-/*-----------------------------------------------------------*/
+
+
+void vTestTask1( void *pvParameters )
+{
+    for (;;)
+	{	
+		printf("Task 1 running\n");
+
+    		taskYIELD();
+    	}
+}
+
+void vTestTask2( void *pvParameters )
+{
+    for (;;)
+	{
+		printf("Task 2 running\n");
+
+		taskYIELD();
+	}
+}
+
+
+
+
+static void prvSetupHardware( void )
+{
+	
+}
 
