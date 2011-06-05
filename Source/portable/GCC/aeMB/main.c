@@ -89,21 +89,6 @@
 #include "../../../../Source/include/task.h"
 
 
-/*
- * Perform any necessary hardware configuration.
- */
-static void prvSetupHardware( void );
-
-/* Set to pdFAIL should an error be discovered in the register test tasks. *
-static unsigned long ulRegisterTestStatus = pdPASS;
-const unsigned long *pulStatusAddr = &ulRegisterTestStatus;
-
-/*-----------------------------------------------------------*/
-
-/*
- * Create all the demo tasks - then start the scheduler.
- */
-
 void vTestTask1( void *pvParameters );
 void vTestTask2( void *pvParameters );
 
@@ -136,7 +121,7 @@ void vTestTask1( void *pvParameters )
 	{	
 		printf("Task 1 running\n");
 
-    		taskYIELD();
+    		//taskYIELD();
     	}
 }
 
@@ -146,15 +131,8 @@ void vTestTask2( void *pvParameters )
 	{
 		printf("Task 2 running\n");
 
-		taskYIELD();
+		//taskYIELD();
 	}
 }
 
-
-
-
-static void prvSetupHardware( void )
-{
-	
-}
 

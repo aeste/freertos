@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Remove all the object files and srecord files
-rm -f *.o a.out a.srec ../../../../../aemb/sim/dump.vmem
+rm -f *.o a.out a.srec ../../../../../aeste/sim/dump.vmem
 
 # Compile and link the project files
 make
