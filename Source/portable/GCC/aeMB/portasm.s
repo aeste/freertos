@@ -1,10 +1,10 @@
 	.extern pxCurrentTCB
-	.extern vTaskISRHandler
+	.extern vTickISR
 	.extern vTaskSwitchContext
 	.extern uxCriticalNesting
 	.extern pulISRStack
 
-	.global __FreeRTOS_interrupt_handler
+	.global _interrupt_handler
 	.global VPortYieldASM
 	.global vStartFirstTask
 
@@ -129,7 +129,7 @@
 	.align  2
 
 
-__FreeRTOS_interrupt_handler:
+_interrupt_handler:
 	portSAVE_CONTEXT
 	/* Entered via an interrupt so interrupts must be enabled in msr. */
 	ori r31, r31, 2
