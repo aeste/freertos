@@ -72,7 +72,7 @@
 //#include "xinclude/xparameters.h"
 
 /* Tasks are started with interrupts enabled. */
-#define portINITIAL_MSR_STATE		( ( portSTACK_TYPE ) 0x00 )
+#define portINITIAL_MSR_STATE		( ( portSTACK_TYPE ) 0x0 )
 
 /* Tasks are started with a critical section nesting of 0 - however prior
 to the scheduler being commenced we don't want the critical nesting level
@@ -263,18 +263,7 @@ static void prvSetupTimerInterrupt( void )
 	setTimer0(0);
 
 }
-/*-----------------------------------------------------------*/
 
-/*
- * The interrupt handler placed in the interrupt vector when the scheduler is
- * started.  The task context has already been saved when this is called.
- * This handler determines the interrupt source and calls the relevant 
- * peripheral handler.
- */
-void vTaskISRHandler( void )
-{
-
-}
 /*-----------------------------------------------------------*/
 
 /* 
@@ -282,15 +271,12 @@ void vTaskISRHandler( void )
  */
 void vTickISR( void *pvBaseAddress )
 {
-unsigned long ulCSR;
+
 
 	/* Increment the RTOS tick - this might cause a task to unblock. */
 	vTaskIncrementTick();
 
-	/* Clear the timer interrupt */
-	//ulCSR = XTmrCtr_mGetControlStatusReg(XPAR_OPB_TIMER_1_BASEADDR, 0);	
-	//XTmrCtr_mSetControlStatusReg( XPAR_OPB_TIMER_1_BASEADDR, portCOUNTER_0, ulCSR );
-
+	
 	/* If we are using the preemptive scheduler then we also need to determine
 	if this tick should cause a context switch. */
 	#if configUSE_PREEMPTION == 1
