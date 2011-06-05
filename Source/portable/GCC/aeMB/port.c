@@ -272,6 +272,9 @@ extern void VPortYieldASM( void );
 static void prvSetupTimerInterrupt( void )
 {
 
+	/* Reset the timer so it starts counting from 0 */
+	setTimer0(0);
+
 }
 /*-----------------------------------------------------------*/
 
