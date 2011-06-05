@@ -207,35 +207,22 @@ const unsigned long ulR13 = ( unsigned long ) &_SDA_BASE_;
 
 portBASE_TYPE xPortStartScheduler( void )
 {
-extern void ( __FreeRTOS_interrupt_Handler )( void );
+
 extern void ( vStartFirstTask )( void );
 
-
-	/* Setup the FreeRTOS interrupt handler.  Code copied from crt0.s. */
-	asm volatile ( 	"la	r6, r0, __FreeRTOS_interrupt_handler		\n\t" \
-					"sw	r6, r1, r0									\n\t" \
-					"lhu r7, r1, r0									\n\t" \
-					"shi r7, r0, 0x12								\n\t" \
-					"shi r6, r0, 0x16 " );
 
 	/* Setup the hardware to generate the tick.  Interrupts are disabled when
 	this function is called. */
 	prvSetupTimerInterrupt();
+	
+	/* Restore the context of the first task that is going to run.
+	Kick off the first task. */
+	vStartFirstTask();
 
 	/* Allocate the stack to be used by the interrupt handler. */
 	pulISRStack = ( unsigned long * ) pvPortMalloc( configMINIMAL_STACK_SIZE * sizeof( portSTACK_TYPE ) );
 
-	/* Restore the context of the first task that is going to run. */
-	if( pulISRStack != NULL )
-	{
-		/* Fill the ISR stack with a known value to facilitate debugging. */
-		memset( pulISRStack, portISR_STACK_FILL_VALUE, configMINIMAL_STACK_SIZE * sizeof( portSTACK_TYPE ) );
-		pulISRStack += ( configMINIMAL_STACK_SIZE - 1 );
-
-		/* Kick off the first task. */
-		vStartFirstTask();
-	}
-
+	
 	/* Should not get here as the tasks are now running! */
 	return pdFALSE;
 }
