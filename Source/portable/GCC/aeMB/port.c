@@ -72,7 +72,7 @@
 //#include "xinclude/xparameters.h"
 
 /* Tasks are started with interrupts enabled. */
-#define portINITIAL_MSR_STATE		( ( portSTACK_TYPE ) 0x0 )
+#define portINITIAL_MSR_STATE		( ( portSTACK_TYPE ) 0x2 )
 
 /* Tasks are started with a critical section nesting of 0 - however prior
 to the scheduler being commenced we don't want the critical nesting level
@@ -244,12 +244,12 @@ extern void VPortYieldASM( void );
 	/* Perform the context switch in a critical section to assure it is
 	not interrupted by the tick ISR.  It is not a problem to do this as
 	each task maintains it's own interrupt status. */
-	//portENTER_CRITICAL();
+	portENTER_CRITICAL();
 		/* Jump directly to the yield function to ensure there is no
 		compiler generated prologue code. */
 		asm volatile (	"bralid r14, VPortYieldASM		\n\t" \
 						"or r0, r0, r0					\n\t" );
-	//portEXIT_CRITICAL();
+	portEXIT_CRITICAL();
 }
 /*-----------------------------------------------------------*/
 
