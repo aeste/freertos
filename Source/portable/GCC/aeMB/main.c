@@ -91,7 +91,8 @@
 
 void vTestTask1( void *pvParameters );
 void vTestTask2( void *pvParameters );
-
+void vTestTask3( void *pvParameters );
+void vTestTask4( void *pvParameters );
 
 int main (void) 
 {
@@ -104,6 +105,8 @@ int main (void)
 
 	xTaskCreate( vTestTask1, "T1",   1000, NULL,1 , NULL );
 	xTaskCreate( vTestTask2, "T2",   1000, NULL,1 , NULL );
+	xTaskCreate( vTestTask3, "T3",   1000, NULL,1 , NULL );
+	xTaskCreate( vTestTask4, "T4",   1000, NULL,1 , NULL );
 	
 	printf("\n\ncommencing the scheduler ... \n\n");
 	
@@ -118,8 +121,8 @@ int main (void)
 void vTestTask1( void *pvParameters )
 {
     for (;;)
-	{	
-		printf("Task 1 running\n");
+	{	unsigned int value1 = getTimer0();
+		printf("Task 1 running%u\n",value1);
 
     		//taskYIELD();
     	}
@@ -128,11 +131,31 @@ void vTestTask1( void *pvParameters )
 void vTestTask2( void *pvParameters )
 {
     for (;;)
-	{
-		printf("Task 2 running\n");
+	{	unsigned int value2 = getTimer0();
+		printf("Task 2 running %u\n",value2);
 
 		//taskYIELD();
 	}
 }
 
+
+void vTestTask3( void *pvParameters )
+{
+    for (;;)
+	{	unsigned int value3 = getTimer0();
+		printf("Task 3 running%u\n",value3);
+
+    		//taskYIELD();
+    	}
+}
+
+void vTestTask4( void *pvParameters )
+{
+    for (;;)
+	{	unsigned int value4 = getTimer0();
+		printf("Task 4 running %u\n",value4);
+
+    		//taskYIELD();
+    	}
+}
 
