@@ -88,29 +88,42 @@
 #include "../../../../Source/include/FreeRTOS.h"
 #include "../../../../Source/include/task.h"
 
-
+/* Tasks functions Prototype */
 void vTestTask1( void *pvParameters );
 void vTestTask2( void *pvParameters );
-
+void vTestTask3( void *pvParameters );
+void vTestTask4( void *pvParameters );
 
 int main (void) 
 {
-
+int TaskNumber = 0;
 
 	/* When re-starting a debug session (rather than cold booting) we want
 	to ensure the installed interrupt handlers do not execute until after the
 	scheduler has been started. */
 	portDISABLE_INTERRUPTS();
 
-	xTaskCreate( vTestTask1, "T1",   1000, NULL,1 , NULL );
+	/* Creating some tasks for the scheduler to run */
+	xTaskCreate( vTestTask1, /* Pointer to the function that implements the task */
+			"T1",	 /* Text name for the task. This is to facilitate debugging only */
+			1000,	 /* Stack depth - the size is large because printf is used for the program testing */
+			NULL,	 /* Task parameter is not used */
+			  1 ,	 /* This task will run at priority 1 */
+			NULL);	 /* Task handle is not used */
+
 	xTaskCreate( vTestTask2, "T2",   1000, NULL,1 , NULL );
+	xTaskCreate( vTestTask3, "T3",   1000, NULL,1 , NULL );
+	xTaskCreate( vTestTask4, "T4",   1000, NULL,1 , NULL );
 	
-	printf("\n\ncommencing the scheduler ... \n\n");
+	/* Get the number of the tasks created from the task queue */
+	TaskNumber = uxTaskGetNumberOfTasks();
+
+	printf("\n\nCommencing The Scheduler With %d Tasks... \n\n", TaskNumber);
 	
-	
+	/* Call this function to start the scheduler */
 	vTaskStartScheduler();
 
-
+	/* The program should not reach this point since the scheduler is running! */
    	return 0;
 }
 
@@ -119,8 +132,13 @@ void vTestTask1( void *pvParameters )
 {
     for (;;)
 	{	
-		printf("Task 1 running\n");
+		/* Get the timer value everytime this task is executed*/
+		unsigned int value1 = getTimer0();
 
+		/* A string that the task is displaying everytime it runs */
+		printf("Task 1 running %u\n",value1);
+	
+		/* Uncomment this when you use cooperative multitasking so the currently running task gives up the processor resources */
     		//taskYIELD();
     	}
 }
@@ -128,11 +146,31 @@ void vTestTask1( void *pvParameters )
 void vTestTask2( void *pvParameters )
 {
     for (;;)
-	{
-		printf("Task 2 running\n");
+	{	unsigned int value2 = getTimer0();
+		printf("Task 2 running %u\n",value2);
 
 		//taskYIELD();
 	}
 }
 
+
+void vTestTask3( void *pvParameters )
+{
+    for (;;)
+	{	unsigned int value3 = getTimer0();
+		printf("Task 3 running %u\n",value3);
+
+    		//taskYIELD();
+    	}
+}
+
+void vTestTask4( void *pvParameters )
+{
+    for (;;)
+	{	unsigned int value4 = getTimer0();
+		printf("Task 4 running %u\n",value4);
+
+    		//taskYIELD();
+    	}
+}
 

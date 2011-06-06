@@ -63,13 +63,6 @@
 /* Standard includes. */
 #include <string.h>
 
-/* Hardware includes. */
-//#include "xinclude/xintc.h"
-//#include "xinclude/xintc_i.h"
-//#include "xinclude/xtmrctr.h"
-
-/*added by me */
-//#include "xinclude/xparameters.h"
 
 /* Tasks are started with interrupts enabled. */
 #define portINITIAL_MSR_STATE		( ( portSTACK_TYPE ) 0x2 )
@@ -215,13 +208,13 @@ extern void ( vStartFirstTask )( void );
 	this function is called. */
 	prvSetupTimerInterrupt();
 	
-	/* Restore the context of the first task that is going to run.
-	Kick off the first task. */
+	/* Restore the context of the first task that is going to run. This task is the frist in the queue as decided by the scheduler.
+	Interrupts are disabled until the very first task is switched in. */
 	vStartFirstTask();
 
 	/* Allocate the stack to be used by the interrupt handler. */
 	pulISRStack = ( unsigned long * ) pvPortMalloc( configMINIMAL_STACK_SIZE * sizeof( portSTACK_TYPE ) );
-
+	
 	
 	/* Should not get here as the tasks are now running! */
 	return pdFALSE;
