@@ -1,10 +1,10 @@
 	.extern pxCurrentTCB
-	.extern vTaskISRHandler
+	.extern vTickISR
 	.extern vTaskSwitchContext
 	.extern uxCriticalNesting
 	.extern pulISRStack
 
-	.global __FreeRTOS_interrupt_handler
+	.global _interrupt_handler
 	.global VPortYieldASM
 	.global vStartFirstTask
 
@@ -129,7 +129,7 @@
 	.align  2
 
 
-__FreeRTOS_interrupt_handler:
+_interrupt_handler:
 	portSAVE_CONTEXT
 	/* Entered via an interrupt so interrupts must be enabled in msr. */
 	ori r31, r31, 2
@@ -141,7 +141,7 @@ __FreeRTOS_interrupt_handler:
 	/* Now switch to use the ISR stack. */
 	lwi r3, r0, pulISRStack
 	add r1, r3, r0
-	bralid r15, vTaskISRHandler
+	bralid r15, vTickISR
 	or r0, r0, r0
 	portRESTORE_CONTEXT
 

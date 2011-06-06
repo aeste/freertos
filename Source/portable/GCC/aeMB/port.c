@@ -63,16 +63,9 @@
 /* Standard includes. */
 #include <string.h>
 
-/* Hardware includes. */
-//#include "xinclude/xintc.h"
-//#include "xinclude/xintc_i.h"
-//#include "xinclude/xtmrctr.h"
-
-/*added by me */
-//#include "xinclude/xparameters.h"
 
 /* Tasks are started with interrupts enabled. */
-#define portINITIAL_MSR_STATE		( ( portSTACK_TYPE ) 0x00 )
+#define portINITIAL_MSR_STATE		( ( portSTACK_TYPE ) 0x2 )
 
 /* Tasks are started with a critical section nesting of 0 - however prior
 to the scheduler being commenced we don't want the critical nesting level
@@ -207,35 +200,22 @@ const unsigned long ulR13 = ( unsigned long ) &_SDA_BASE_;
 
 portBASE_TYPE xPortStartScheduler( void )
 {
-extern void ( __FreeRTOS_interrupt_Handler )( void );
+
 extern void ( vStartFirstTask )( void );
 
-
-	/* Setup the FreeRTOS interrupt handler.  Code copied from crt0.s. */
-	asm volatile ( 	"la	r6, r0, __FreeRTOS_interrupt_handler		\n\t" \
-					"sw	r6, r1, r0									\n\t" \
-					"lhu r7, r1, r0									\n\t" \
-					"shi r7, r0, 0x12								\n\t" \
-					"shi r6, r0, 0x16 " );
 
 	/* Setup the hardware to generate the tick.  Interrupts are disabled when
 	this function is called. */
 	prvSetupTimerInterrupt();
+	
+	/* Restore the context of the first task that is going to run. This task is the frist in the queue as decided by the scheduler.
+	Interrupts are disabled until the very first task is switched in. */
+	vStartFirstTask();
 
 	/* Allocate the stack to be used by the interrupt handler. */
 	pulISRStack = ( unsigned long * ) pvPortMalloc( configMINIMAL_STACK_SIZE * sizeof( portSTACK_TYPE ) );
-
-	/* Restore the context of the first task that is going to run. */
-	if( pulISRStack != NULL )
-	{
-		/* Fill the ISR stack with a known value to facilitate debugging. */
-		memset( pulISRStack, portISR_STACK_FILL_VALUE, configMINIMAL_STACK_SIZE * sizeof( portSTACK_TYPE ) );
-		pulISRStack += ( configMINIMAL_STACK_SIZE - 1 );
-
-		/* Kick off the first task. */
-		vStartFirstTask();
-	}
-
+	
+	
 	/* Should not get here as the tasks are now running! */
 	return pdFALSE;
 }
@@ -257,12 +237,12 @@ extern void VPortYieldASM( void );
 	/* Perform the context switch in a critical section to assure it is
 	not interrupted by the tick ISR.  It is not a problem to do this as
 	each task maintains it's own interrupt status. */
-	//portENTER_CRITICAL();
+	portENTER_CRITICAL();
 		/* Jump directly to the yield function to ensure there is no
 		compiler generated prologue code. */
 		asm volatile (	"bralid r14, VPortYieldASM		\n\t" \
 						"or r0, r0, r0					\n\t" );
-	//portEXIT_CRITICAL();
+	portEXIT_CRITICAL();
 }
 /*-----------------------------------------------------------*/
 
@@ -272,19 +252,11 @@ extern void VPortYieldASM( void );
 static void prvSetupTimerInterrupt( void )
 {
 
-}
-/*-----------------------------------------------------------*/
-
-/*
- * The interrupt handler placed in the interrupt vector when the scheduler is
- * started.  The task context has already been saved when this is called.
- * This handler determines the interrupt source and calls the relevant 
- * peripheral handler.
- */
-void vTaskISRHandler( void )
-{
+	/* Reset the timer so it starts counting from 0 */
+	setTimer0(0);
 
 }
+
 /*-----------------------------------------------------------*/
 
 /* 
@@ -292,15 +264,12 @@ void vTaskISRHandler( void )
  */
 void vTickISR( void *pvBaseAddress )
 {
-unsigned long ulCSR;
+
 
 	/* Increment the RTOS tick - this might cause a task to unblock. */
 	vTaskIncrementTick();
 
-	/* Clear the timer interrupt */
-	//ulCSR = XTmrCtr_mGetControlStatusReg(XPAR_OPB_TIMER_1_BASEADDR, 0);	
-	//XTmrCtr_mSetControlStatusReg( XPAR_OPB_TIMER_1_BASEADDR, portCOUNTER_0, ulCSR );
-
+	
 	/* If we are using the preemptive scheduler then we also need to determine
 	if this tick should cause a context switch. */
 	#if configUSE_PREEMPTION == 1
