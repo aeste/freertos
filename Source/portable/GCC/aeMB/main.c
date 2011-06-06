@@ -96,7 +96,7 @@ void vTestTask4( void *pvParameters );
 
 int main (void) 
 {
-
+int TaskNumber = 0;
 
 	/* When re-starting a debug session (rather than cold booting) we want
 	to ensure the installed interrupt handlers do not execute until after the
@@ -108,7 +108,9 @@ int main (void)
 	xTaskCreate( vTestTask3, "T3",   1000, NULL,1 , NULL );
 	xTaskCreate( vTestTask4, "T4",   1000, NULL,1 , NULL );
 	
-	printf("\n\ncommencing the scheduler ... \n\n");
+	TaskNumber = uxTaskGetNumberOfTasks();
+
+	printf("\n\nCommencing The Scheduler With %d Tasks... \n\n", TaskNumber);
 	
 	
 	vTaskStartScheduler();
@@ -122,7 +124,7 @@ void vTestTask1( void *pvParameters )
 {
     for (;;)
 	{	unsigned int value1 = getTimer0();
-		printf("Task 1 running%u\n",value1);
+		printf("Task 1 running %u\n",value1);
 
     		//taskYIELD();
     	}
@@ -143,7 +145,7 @@ void vTestTask3( void *pvParameters )
 {
     for (;;)
 	{	unsigned int value3 = getTimer0();
-		printf("Task 3 running%u\n",value3);
+		printf("Task 3 running %u\n",value3);
 
     		//taskYIELD();
     	}
