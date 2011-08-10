@@ -1,5 +1,5 @@
 	.extern pxCurrentTCB
-	.extern vTickISR
+	.extern vTaskISRHandler
 	.extern vTaskSwitchContext
 	.extern uxCriticalNesting
 	.extern pulISRStack
@@ -141,7 +141,7 @@ _interrupt_handler:
 	/* Now switch to use the ISR stack. */
 	lwi r3, r0, pulISRStack
 	add r1, r3, r0
-	bralid r15, vTickISR
+	bralid r15, vTaskISRHandler
 	or r0, r0, r0
 	portRESTORE_CONTEXT
 
