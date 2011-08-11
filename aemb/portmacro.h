@@ -120,14 +120,14 @@ void vPortYield( void );
 #define portYIELD() vPortYield()
 
 void vTaskSwitchContext();
-#define portYIELD_FROM_ISR() vTaskSwitchContext()
+#define portYIELD_FROM_ISR() 	vTaskSwitchContext()
 /*-----------------------------------------------------------*/
 
 /* Hardware specifics. */
 #define portBYTE_ALIGNMENT			4
 #define portSTACK_GROWTH			( -1 )
 #define portTICK_RATE_MS			( ( portTickType ) 1000 / configTICK_RATE_HZ )		
-#define portNOP()					asm volatile ( "NOP" )
+#define portNOP()					asm volatile ( "XOR	r0, r0, r0" )
 /*-----------------------------------------------------------*/
 
 /* Task function macros as described on the FreeRTOS.org WEB site. */
