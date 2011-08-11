@@ -100,13 +100,14 @@
 	interrupt instruction to ensure interrupts are enabled only once the task
 	is running again. */
 	andi r3, r3, 2
-	beqid r3, 36
-	xor r0, r0, r0
+	beqid r3, 28
+	lwi r3, r1, 8
+	/*xor r0, r0, r0*/
 
 	/* Reload the rmsr from the stack, clear the enable interrupt bit in the
 	value before saving back to rmsr register, then return enabling interrupts
 	as we return. */
-	lwi r3, r1, 8
+	/* DELAY lwi r3, r1, 8 */
 	andi r3, r3, ~2
 	mts rmsr, r3
 	lwi r3, r1, 120
@@ -116,7 +117,7 @@
 
 	/* Reload the rmsr from the stack, place it in the rmsr register, and
 	return without enabling interrupts. */
-	lwi r3, r1, 8
+	/* DELAY lwi r3, r1, 8 */
 	mts rmsr, r3
 	lwi r3, r1, 120
 	/* DELAY addik r1, r1, 132 */
@@ -142,7 +143,7 @@ _interrupt_handler:
 	lwi r3, r0, pulISRStack
 	/* DELAY add r1, r3, r0 */
 	bralid r15, vTaskISRHandler
-	add r1, r3, r0
+	addk r1, r3, r0
 	portRESTORE_CONTEXT
 
 
@@ -158,7 +159,7 @@ VPortYieldASM:
 	lwi r3, r0, pulISRStack
 	/* DELAY add r1, r3, r0 */
 	bralid r15, vTaskSwitchContext
-	add r1, r3, r0
+	addk r1, r3, r0
 	portRESTORE_CONTEXT
 
 vStartFirstTask:
