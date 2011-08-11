@@ -37,8 +37,14 @@ crt.o: ../aemb/crt.S $(FreeRTOS)
 	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../aemb/crt.S
 #	mb-as ../aemb/crt.S -o crt.o
 
-heap.o: ../FreeRTOS/Source/portable/MemMang/heap_3.c $(FreeRTOS)
-	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/portable/MemMang/heap_3.c -o heap.o
+heap.o: ../FreeRTOS/Source/portable/MemMang/heap_1.c $(FreeRTOS)
+	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/portable/MemMang/heap_1.c -o heap.o
+
+#heap.o: ../FreeRTOS/Source/portable/MemMang/heap_2.c $(FreeRTOS)
+#	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/portable/MemMang/heap_2.c -o heap.o
+
+#heap.o: ../FreeRTOS/Source/portable/MemMang/heap_3.c $(FreeRTOS)
+#	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/portable/MemMang/heap_3.c -o heap.o
 
 srec: freertos
 	mb-objcopy -O srec freertos.o freertos.srec
