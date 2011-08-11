@@ -3,7 +3,7 @@ FRTOSINC = -I../FreeRTOS/Source/include/ -I../aemb/ -I./
 
 CC = mb-gcc
 COPTS = -mxl-barrel-shift -mno-xl-soft-mul -Wall
-OOPTS = -O0 -g2 -finline-functions
+OOPTS = -Os -g2 -finline-functions
 LOPTS = -Wl,-defsym -Wl,_HEAP_SIZE=0x8000
 # -nostartfiles -Ttext 0x400
 
@@ -27,8 +27,8 @@ tasks.o: ../FreeRTOS/Source/tasks.c  ../FreeRTOS/Source/include/task.h $(FreeRTO
 port.o: ../aemb/port.c ../aemb/port.h $(FreeRTOS) 
 	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../aemb/port.c
 
-portasm.o: ../aemb/portasm.s $(FreeRTOS)
-	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../aemb/portasm.s
+portasm.o: ../aemb/portasm.S $(FreeRTOS)
+	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../aemb/portasm.S
 
 heap_3.o: ../FreeRTOS/Source/portable/MemMang/heap_3.c $(FreeRTOS)
 	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/portable/MemMang/heap_3.c
