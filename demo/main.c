@@ -103,14 +103,14 @@ int main(void) {
 
 	/* Creating some tasks for the scheduler to run */
 	xTaskCreate( vTestTask1, /* Pointer to the function that implements the task */
-			"T1", /* Text name for the task. This is to facilitate debugging only */
+			"T0", /* Text name for the task. This is to facilitate debugging only */
 			1000, /* Stack depth - the size is large because printf is used for the program testing */
 			NULL, /* Task parameter is not used */
 			1 , /* This task will run at priority 1 */
 			NULL); /* Task handle is not used */
 
-	xTaskCreate( vTestTask2, "T2", 1000, NULL,1 , NULL );
-	xTaskCreate( vTestTask3, "T3", 1000, NULL,1 , NULL );
+	xTaskCreate( vTestTask2, "T1", 1000, NULL,1 , NULL );
+	xTaskCreate( vTestTask3, "T2", 1000, NULL,1 , NULL );
 
 	/* Get the number of the tasks created from the task queue */
 	TaskNumber = uxTaskGetNumberOfTasks();
@@ -125,9 +125,9 @@ int main(void) {
 }
 
 void vTestTask1(void *pvParameters) {
-	for (;;) {
+	while (1) {
 		/* Get the timer value everytime this task is executed*/
-		unsigned int value1 = getTimer0();
+		//unsigned int value1 = getTimer0();
 
 		/* A string that the task is displaying everytime it runs */
 		//printf("Task 1 running %u\n", value1);
@@ -139,20 +139,15 @@ void vTestTask1(void *pvParameters) {
 }
 
 void vTestTask2(void *pvParameters) {
-	for (;;) {
-		unsigned int value2 = getTimer0();
-		iprintf("Task 2 running %u\n", value2);
-
+	while (1) {
+		iprintf("Task 2 %u\n", getTimer0());
 		//taskYIELD();
 	}
 }
 
 void vTestTask3(void *pvParameters) {
-	for (;;) {
-		unsigned int value3 = getTimer0();
-		iprintf("Task 3 running %u\n", value3);
-
-		//taskYIELD();
+	while (1) {
+		iprintf("Task 3 %u\n", getTimer0());
 	}
 }
 
