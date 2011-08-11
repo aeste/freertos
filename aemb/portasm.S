@@ -110,7 +110,7 @@
 	andi r3, r3, ~2
 	mts rmsr, r3
 	lwi r3, r1, 120
-	/* DELAY SLOT addik r1, r1, 132 */
+	/* DELAY addik r1, r1, 132 */
 	rtid r14, 0
 	addik r1, r1, 132
 
@@ -119,7 +119,7 @@
 	lwi r3, r1, 8
 	mts rmsr, r3
 	lwi r3, r1, 120
-	/* DELAY SLOT addik r1, r1, 132 */
+	/* DELAY addik r1, r1, 132 */
 	rtsd r14, 0
 	addik r1, r1, 132
 
