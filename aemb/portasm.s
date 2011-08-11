@@ -110,20 +110,18 @@
 	andi r3, r3, ~2
 	mts rmsr, r3
 	lwi r3, r1, 120
-	//addik r1, r1, 132
+	/* DELAY SLOT addik r1, r1, 132 */
 	rtid r14, 0
 	addik r1, r1, 132
-	//xor r0, r0, r0
 
 	/* Reload the rmsr from the stack, place it in the rmsr register, and
 	return without enabling interrupts. */
 	lwi r3, r1, 8
 	mts rmsr, r3
 	lwi r3, r1, 120
-	//addik r1, r1, 132
+	/* DELAY SLOT addik r1, r1, 132 */
 	rtsd r14, 0
 	addik r1, r1, 132
-	//xor r0, r0, r0
 
 	.endm
 
@@ -142,10 +140,9 @@ _interrupt_handler:
 	swi r14, r1, 76
 	/* Now switch to use the ISR stack. */
 	lwi r3, r0, pulISRStack
-	//add r1, r3, r0
+	/* DELAY add r1, r3, r0 */
 	bralid r15, vTaskISRHandler
 	add r1, r3, r0
-	//xor r0, r0, r0
 	portRESTORE_CONTEXT
 
 
@@ -159,10 +156,9 @@ VPortYieldASM:
 	swi r14, r1, 76
 	/* Now switch to use the ISR stack. */
 	lwi r3, r0, pulISRStack
-	//add r1, r3, r0
+	/* DELAY add r1, r3, r0 */
 	bralid r15, vTaskSwitchContext
 	add r1, r3, r0
-	//xor r0, r0, r0
 	portRESTORE_CONTEXT
 
 vStartFirstTask:
