@@ -24,7 +24,9 @@ COPTS = -mxl-barrel-shift -mno-xl-soft-mul -Wall
 OOPTS = -Os -g2 -finline-functions
 LOPTS = -Wl,-defsym -Wl,_HEAP_SIZE=0x8000
 
-all: main.o list.o queue.o tasks.o port.o heap_3.o portasm.o
+all: freertos srec dump
+
+freertos: main.o list.o queue.o tasks.o port.o heap_3.o portasm.o
 	$(CC) $(COPTS) $(LOPTS) $(OOPTS) *.o -o freertos.o
 
 main.o: main.c $(FreeRTOS)
@@ -48,5 +50,12 @@ portasm.o: ../aemb/portasm.s $(FreeRTOS)
 heap_3.o: ../FreeRTOS/Source/portable/MemMang/heap_3.c $(FreeRTOS)
 	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/portable/MemMang/heap_3.c
 
+srec: freertos
+	mb-objcopy -O srec freertos.o freertos.srec
+	
+dump: freertos
+	mb-objdump -DSC freertos.o > freertos.S
+
 clean:
+	rm -f freertos.*
 	rm -f *.o
