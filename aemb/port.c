@@ -222,8 +222,10 @@ void vPortYield(void) {
 	portENTER_CRITICAL();
 	/* Jump directly to the yield function to ensure there is no
 	 compiler generated prologue code. */
-	asm volatile ( "bralid r14, VPortYieldASM		\n\t"
-			"or r0, r0, r0					\n\t" );
+	asm volatile (
+			"bralid r14, VPortYieldASM;"
+			"xor r0, r0, r0;"
+	);
 	portEXIT_CRITICAL();
 }
 /*-----------------------------------------------------------*/
