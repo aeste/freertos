@@ -87,10 +87,8 @@ extern "C" {
 /*-----------------------------------------------------------*/	
 
 /* Interrupt control macros. */
-inline int aembDisableInterrupts();
-inline int aembEnableInterrupts();
-#define portDISABLE_INTERRUPTS()	aembDisableInterrupts()
-#define portENABLE_INTERRUPTS()		aembEnableInterrupts()
+#define portDISABLE_INTERRUPTS() { asm volatile ("msrclr r0, 2"); }
+#define portENABLE_INTERRUPTS() { asm volatile ("msrset r0, 2"); }
 /*-----------------------------------------------------------*/
 
 /* Critical section macros. */
@@ -98,7 +96,7 @@ void vPortEnterCritical( void );
 void vPortExitCritical( void );
 #define portENTER_CRITICAL()		{														\
 										extern unsigned portBASE_TYPE uxCriticalNesting;	\
-										aembDisableInterrupts();					\
+										portDISABLE_INTERRUPTS();					\
 										uxCriticalNesting++;								\
 									}
 									
