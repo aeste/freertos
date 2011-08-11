@@ -87,10 +87,8 @@ extern "C" {
 /*-----------------------------------------------------------*/	
 
 /* Interrupt control macros. */
-inline int aembDisableInterrupts();
-inline int aembEnableInterrupts();
-#define portDISABLE_INTERRUPTS()	aembDisableInterrupts()
-#define portENABLE_INTERRUPTS()		aembEnableInterrupts()
+#define portDISABLE_INTERRUPTS() { asm volatile ("msrclr r0, 2"); }
+#define portENABLE_INTERRUPTS() { asm volatile ("msrset r0, 2"); }
 /*-----------------------------------------------------------*/
 
 /* Critical section macros. */
@@ -98,7 +96,7 @@ void vPortEnterCritical( void );
 void vPortExitCritical( void );
 #define portENTER_CRITICAL()		{														\
 										extern unsigned portBASE_TYPE uxCriticalNesting;	\
-										aembDisableInterrupts();					\
+										portDISABLE_INTERRUPTS();					\
 										uxCriticalNesting++;								\
 									}
 									
@@ -122,14 +120,14 @@ void vPortYield( void );
 #define portYIELD() vPortYield()
 
 void vTaskSwitchContext();
-#define portYIELD_FROM_ISR() vTaskSwitchContext()
+#define portYIELD_FROM_ISR() 	vTaskSwitchContext()
 /*-----------------------------------------------------------*/
 
 /* Hardware specifics. */
 #define portBYTE_ALIGNMENT			4
 #define portSTACK_GROWTH			( -1 )
 #define portTICK_RATE_MS			( ( portTickType ) 1000 / configTICK_RATE_HZ )		
-#define portNOP()					asm volatile ( "NOP" )
+#define portNOP()					asm volatile ( "XOR	r0, r0, r0" )
 /*-----------------------------------------------------------*/
 
 /* Task function macros as described on the FreeRTOS.org WEB site. */
