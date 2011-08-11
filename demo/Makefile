@@ -2,16 +2,17 @@ FreeRTOS = ../FreeRTOS/Source/include/FreeRTOS.h
 FRTOSINC = -I../FreeRTOS/Source/include/ -I../aemb/ -I./
 
 CC = mb-gcc
-COPTS = -mxl-barrel-shift -mno-xl-soft-mul -Wall
-OOPTS = -Os -g 
+COPTS = -Wall -mxl-barrel-shift -mno-xl-soft-mul
+# -xl-mode-bootstrap
+OOPTS = -Os
 # -finline-functions
-LOPTS = -Wl,-defsym -Wl,_HEAP_SIZE=0x8000 -Wl,--entry=_start2
+LOPTS = -Wl,-defsym -Wl,_HEAP_SIZE=0x8000 -Wl,--entry=_vector_reset -Wl,--script=aemb.ld
 # -nostartfiles -Ttext 0x400 -e __start -Wl,-defsym -Wl,_TEXT_START_ADDR=0x30 
 
 all: freertos srec dump vmem
-	#rm -f *.o
+#	rm -f *.o
 	
-freertos: main.o list.o queue.o tasks.o port.o heap.o portasm.o #crt0.o
+freertos: main.o list.o queue.o tasks.o port.o heap.o portasm.o crt.o
 	$(CC) $(COPTS) $(LOPTS) $(OOPTS) *.o -o freertos.o
 
 main.o: main.c $(FreeRTOS)
@@ -32,8 +33,9 @@ port.o: ../aemb/port.c ../aemb/port.h $(FreeRTOS)
 portasm.o: ../aemb/portasm.S $(FreeRTOS)
 	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../aemb/portasm.S
 
-crt0.o: ../aemb/crt0.S $(FreeRTOS)
-	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../aemb/crt0.S
+crt.o: ../aemb/crt.S $(FreeRTOS)
+	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../aemb/crt.S
+#	mb-as ../aemb/crt.S -o crt.o
 
 heap.o: ../FreeRTOS/Source/portable/MemMang/heap_3.c $(FreeRTOS)
 	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/portable/MemMang/heap_3.c -o heap.o
