@@ -77,16 +77,30 @@
  *
  */
 
+#include "FreeRTOSConfig.h"
+
+/* Scheduler includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 
-/* Core includes */
-#include "aeinclude/core.hh"
-#include "aeinclude/simboard.hh"
+// Enable global interrupts
+inline int aembEnableInterrupts()
+{
+	int msr;
+    asm volatile ("msrset %0, %1":"=r"(msr):"K"(1<<1));
+    return msr;
+}
 
-/* Scheduler includes. */
-#include "../../../../Source/include/FreeRTOS.h"
-#include "../../../../Source/include/task.h"
+// Disable global interrupts *
+inline int aembDisableInterrupts()
+{
+    int msr;
+    asm volatile ("msrclr %0, %1":"=r"(msr):"K"(1<<1));
+    return msr;
+}
 
 /* Tasks functions Prototype */
 void vTestTask1( void *pvParameters );
