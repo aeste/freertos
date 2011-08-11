@@ -83,24 +83,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include <stdlib.h>
 #include <stdio.h>
-
-// Enable global interrupts
-inline int aembEnableInterrupts()
-{
-	int msr;
-    asm volatile ("msrset %0, %1":"=r"(msr):"K"(1<<1));
-    return msr;
-}
-
-// Disable global interrupts *
-inline int aembDisableInterrupts()
-{
-    int msr;
-    asm volatile ("msrclr %0, %1":"=r"(msr):"K"(1<<1));
-    return msr;
-}
 
 /* Tasks functions Prototype */
 void vTestTask1( void *pvParameters );
@@ -132,13 +115,13 @@ int TaskNumber = 0;
 	/* Get the number of the tasks created from the task queue */
 	TaskNumber = uxTaskGetNumberOfTasks();
 
-	printf("\n\nCommencing The Scheduler With %d Tasks... \n\n", TaskNumber);
+	puts("Starting FreeRTOS\n");
 	
 	/* Call this function to start the scheduler */
 	vTaskStartScheduler();
 
 	/* The program should not reach this point since the scheduler is running! */
-   	return 0;
+   	return -1;
 }
 
 
