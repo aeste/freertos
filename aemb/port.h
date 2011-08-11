@@ -25,7 +25,7 @@
 
 /* The stack used by the ISR is filled with a known value to assist in
  debugging. */
-#define portISR_STACK_FILL_VALUE	0x55555555
+#define portISR_STACK_FILL_VALUE	0xAEAEAEAE
 
 /* Counts the nesting depth of calls to portENTER_CRITICAL().  Each task
  maintains it's own count, so this variable is saved as part of the task
@@ -37,7 +37,7 @@ unsigned portBASE_TYPE uxCriticalNesting = portINITIAL_NESTING_VALUE;
 unsigned long *pulISRStack;
 
 /*-----------------------------------------------------------*/
-/* TODO: Convert ASM to C later */
+/* TODO: Convert ASM to C later
 static inline void portSAVE_CONTEXT() {
 	// Make room for the context on the stack.
 	asm volatile("addik r1, r1, -132;");
@@ -182,8 +182,8 @@ void _interrupt_handler() {
 /*-----------------------------------------------------------*/
 
 inline void outbyte(char c) {
-	volatile char * outc = (char *)0xFFFFFFC0;
-	*outc = c;
+	volatile char * OUTC = (char *)0xFFFFFFC0;
+	*OUTC = c;
 }
 
 inline char inbyte() {
