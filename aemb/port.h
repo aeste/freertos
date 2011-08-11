@@ -190,12 +190,16 @@ inline char inbyte() {
 	return 0;
 }
 
-inline int getTimer0() {
-	return 0;
+inline int getTimer0()
+{
+  int *TMR0 = (int *) 0xFFFFFFF0;
+  return *TMR0;
 }
 
-inline void setTimer0(int t) {
-	asm volatile ("nop");
+inline int setTimer0(int timer)
+{
+  volatile int *TMR0 = (int *) 0xFFFFFFF0;
+  *TMR0 = timer;
 }
 
 #endif // PORT_H_
