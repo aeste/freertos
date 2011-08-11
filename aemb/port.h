@@ -37,8 +37,8 @@ unsigned portBASE_TYPE uxCriticalNesting = portINITIAL_NESTING_VALUE;
 unsigned long *pulISRStack;
 
 /*-----------------------------------------------------------*/
-/* TODO: Convert ASM to C later
-inline void portSAVE_CONTEXT() {
+/* TODO: Convert ASM to C later */
+static inline void portSAVE_CONTEXT() {
 	// Make room for the context on the stack.
 	asm volatile("addik r1, r1, -132;");
 	// Save r31 so it can then be used.
@@ -135,23 +135,19 @@ inline void portRESTORE_CONTEXT() {
 			"andi r3, r3, ~2;"
 			"mts rmsr, r3;"
 			"lwi r3, r1, 120;"
-			"addik r1, r1, 132;"
 			"rtid r14, 0;"
-			"xor r0, r0, r0;");
+			"addik r1, r1, 132;");
 
 	// Reload the rmsr from the stack, place it in the rmsr register, and return without enabling interrupts.
 	asm volatile("lwi r3, r1, 8;"
 			"mts rmsr, r3;"
 			"lwi r3, r1, 120;"
-			"addik r1, r1, 132;"
 			"rtsd r14, 0;"
-			"xor r0, r0, r0;");
+			"addik r1, r1, 132;");
 
 }
 
-void vStartFirstTask() {
-	portRESTORE_CONTEXT();
-}
+#define vStartFirstTask() {	portRESTORE_CONTEXT(); }
 
 void VPortYieldASM() {
 	portSAVE_CONTEXT();
@@ -162,33 +158,43 @@ void VPortYieldASM() {
 			"swi r14, r1, 76;");
 	// Now switch to use the ISR stack.
 	asm volatile ("lwi r3, r0, pulISRStack;"
-			"add r1, r3, r0;"
 			"bralid r15, vTaskSwitchContext;"
-			"or r0, r0, r0;");
+			"add r1, r3, r0;");
 	portRESTORE_CONTEXT();
 }
 
-void _interrupt_handler()
-{
+void _interrupt_handler() {
 	portSAVE_CONTEXT();
+	// Entered via an interrupt so interrupts must be enabled in msr.
+	asm volatile("ori r31, r31, 2;");
+	// Stack msr.
+	asm volatile("swi r31, r1, 8;");
+	// Stack the return address.  As we entered via an interrupt we do not need to modify the return address prior to stacking.
+	asm volatile("swi r14, r1, 76;");
+	// Now switch to use the ISR stack.
+	asm volatile("lwi r3, r0, pulISRStack;");
+	// DELAY add r1, r3, r0
+	asm volatile("bralid r15, vTaskISRHandler;"
+			"add r1, r3, r0;");
 	portRESTORE_CONTEXT();
 }
 
 /*-----------------------------------------------------------*/
 
-void outbyte(char c) {
-	asm volatile ("nop");
+inline void outbyte(char c) {
+	volatile char * outc = (char *)0xFFFFFFC0;
+	*outc = c;
 }
 
-char inbyte() {
+inline char inbyte() {
 	return 0;
 }
 
-int getTimer0() {
+inline int getTimer0() {
 	return 0;
 }
 
-void setTimer0(int t) {
+inline void setTimer0(int t) {
 	asm volatile ("nop");
 }
 
