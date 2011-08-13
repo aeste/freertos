@@ -268,7 +268,7 @@ void _program_init() {
 	_aembLockMTX(); // enter critical section
 
 	// split and shift the stack for thread 1
-	if (aembIsThread1()) // main thread
+	if (aembIsThread0()) // main thread
 	{
 		_aembFreeMTX(); // exit critical section
 		while (1)
