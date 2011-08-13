@@ -181,10 +181,6 @@ portBASE_TYPE xPortStartScheduler(void) {
 	 this function is called. */
 	prvSetupTimerInterrupt();
 
-	/* Restore the context of the first task that is going to run. This task is the frist in the queue as decided by the scheduler.
-	 Interrupts are disabled until the very first task is switched in. */
-	//vStartFirstTask();
-
 	/* Allocate the stack to be used by the interrupt handler. */
 	pulISRStack = (unsigned long *) pvPortMalloc(configMINIMAL_STACK_SIZE
 			* sizeof(portSTACK_TYPE ));
@@ -192,8 +188,8 @@ portBASE_TYPE xPortStartScheduler(void) {
 	/* Restore the context of the first task that is going to run. */
 	if (pulISRStack != NULL) {
 		/* Fill the ISR stack with a known value to facilitate debugging. */
-		//memset(pulISRStack, portISR_STACK_FILL_VALUE, configMINIMAL_STACK_SIZE
-		//		* sizeof(portSTACK_TYPE ));
+		memset(pulISRStack, portISR_STACK_FILL_VALUE, configMINIMAL_STACK_SIZE
+				* sizeof(portSTACK_TYPE ));
 		pulISRStack += (configMINIMAL_STACK_SIZE - 1);
 
 		/* Kick off the first task. */
