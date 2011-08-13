@@ -131,7 +131,7 @@ void vTestTask1(void *pvParameters) {
 
 		/* A string that the task is displaying everytime it runs */
 		//printf("Task 1 running %u\n", value1);
-		puts("Task1");
+		puts("Task 1");
 
 		/* Uncomment this when you use cooperative multitasking so the currently running task gives up the processor resources */
 		//taskYIELD();
@@ -140,14 +140,16 @@ void vTestTask1(void *pvParameters) {
 
 void vTestTask2(void *pvParameters) {
 	while (1) {
-		iprintf("Task 2 %u\n", getTimer0());
-		//taskYIELD();
+		iprintf("Task 2 %X\n", getTimer0());
 	}
 }
 
 void vTestTask3(void *pvParameters) {
+	int tmp;
 	while (1) {
-		iprintf("Task 3 %u\n", getTimer0());
+		asm volatile ("mfs	%0, rmsr;"
+				:"=r"(tmp));
+		iprintf("Task 3 %X\n", tmp);
 	}
 }
 
