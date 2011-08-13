@@ -192,8 +192,8 @@ portBASE_TYPE xPortStartScheduler(void) {
 	/* Restore the context of the first task that is going to run. */
 	if (pulISRStack != NULL) {
 		/* Fill the ISR stack with a known value to facilitate debugging. */
-		memset(pulISRStack, portISR_STACK_FILL_VALUE, configMINIMAL_STACK_SIZE
-				* sizeof(portSTACK_TYPE ));
+		//memset(pulISRStack, portISR_STACK_FILL_VALUE, configMINIMAL_STACK_SIZE
+		//		* sizeof(portSTACK_TYPE ));
 		pulISRStack += (configMINIMAL_STACK_SIZE - 1);
 
 		/* Kick off the first task. */
@@ -250,6 +250,8 @@ void vTickISR(void *pvBaseAddress) {
 	vTaskIncrementTick();
 
 	/* Clear the timer interrupt */
+	volatile *XACK = 0xFFFFFFE0;
+	*XACK = -1;
 
 	/* If we are using the preemptive scheduler then we also need to determine
 	 if this tick should cause a context switch. */
@@ -267,7 +269,6 @@ void vTickISR(void *pvBaseAddress) {
  * peripheral handler.
  */
 void vTaskISRHandler(void) {
-
 	vTickISR(NULL);
 
 }
