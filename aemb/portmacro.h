@@ -87,8 +87,8 @@ extern "C" {
 /*-----------------------------------------------------------*/	
 
 /* Interrupt control macros. */
-#define portDISABLE_INTERRUPTS() { asm volatile ("msrclr r0, 2"); }
-#define portENABLE_INTERRUPTS() { asm volatile ("msrset r0, 2"); }
+#define portDISABLE_INTERRUPTS() { asm volatile ("msrclr r0, 2;"); }
+#define portENABLE_INTERRUPTS() { asm volatile ("msrset r0, 2;"); }
 /*-----------------------------------------------------------*/
 
 /* Critical section macros. */
@@ -120,7 +120,7 @@ void vPortYield( void );
 #define portYIELD() vPortYield()
 
 void vTaskSwitchContext();
-#define portYIELD_FROM_ISR() 	vTaskSwitchContext()
+#define portYIELD_FROM_ISR() vTaskSwitchContext()
 /*-----------------------------------------------------------*/
 
 /* Hardware specifics. */
