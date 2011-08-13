@@ -12,7 +12,7 @@ LOPTS = -Wl,-defsym -Wl,_HEAP_SIZE=0x8000 -Wl,--entry=_vector_reset -Wl,--script
 all: freertos srec dump vmem
 #	rm -f *.o
 	
-freertos: main.o list.o queue.o tasks.o port.o heap.o portasm.o crt.o
+freertos: main.o list.o queue.o tasks.o port.o heap.o portasm.o #crt.o
 	$(CC) $(COPTS) $(LOPTS) $(OOPTS) *.o -o freertos.o
 
 main.o: main.c $(FreeRTOS)
