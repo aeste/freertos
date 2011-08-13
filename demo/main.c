@@ -68,8 +68,9 @@ void vTestTask1(void *pvParameters) {
 		//unsigned int value1 = getTimer0();
 
 		/* A string that the task is displaying everytime it runs */
-		//printf("Task 1 running %u\n", value1);
+		portDISABLE_INTERRUPTS();
 		puts("Task 1");
+		portENABLE_INTERRUPTS();
 
 		/* Uncomment this when you use cooperative multitasking so the currently running task gives up the processor resources */
 		//taskYIELD();
@@ -77,17 +78,21 @@ void vTestTask1(void *pvParameters) {
 }
 
 void vTestTask2(void *pvParameters) {
+	int *TMR0 = (int *) 0xFFFFFFF0;
 	while (1) {
-		iprintf("Task 2 %X\n", getTimer0());
+		portDISABLE_INTERRUPTS();
+		iprintf("Task 2 %X\n", *TMR0);
+		portENABLE_INTERRUPTS();
 	}
 }
 
 void vTestTask3(void *pvParameters) {
 	int tmp;
 	while (1) {
-		asm volatile ("mfs	%0, rmsr;"
-				:"=r"(tmp));
+		asm volatile ("mfs	%0, rmsr;":"=r"(tmp));
+		portDISABLE_INTERRUPTS();
 		iprintf("Task 3 %X\n", tmp);
+		portENABLE_INTERRUPTS();
 	}
 }
 
