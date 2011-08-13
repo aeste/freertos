@@ -1,80 +1,19 @@
 /*
- FreeRTOS V6.1.1 - Copyright (C) 2011 Real Time Engineers Ltd.
+ AEMB2 FREERTOS PORT
+ Copyright (C) 2011 AESTE WORKS (M) SDN BHD.
 
- ***************************************************************************
- *                                                                         *
- * If you are:                                                             *
- *                                                                         *
- *    + New to FreeRTOS,                                                   *
- *    + Wanting to learn FreeRTOS or multitasking in general quickly       *
- *    + Looking for basic training,                                        *
- *    + Wanting to improve your FreeRTOS skills and productivity           *
- *                                                                         *
- * then take a look at the FreeRTOS books - available as PDF or paperback  *
- *                                                                         *
- *        "Using the FreeRTOS Real Time Kernel - a Practical Guide"        *
- *                  http://www.FreeRTOS.org/Documentation                  *
- *                                                                         *
- * A pdf reference manual is also available.  Both are usually delivered   *
- * to your inbox within 20 minutes to two hours when purchased between 8am *
- * and 8pm GMT (although please allow up to 24 hours in case of            *
- * exceptional circumstances).  Thank you for your support!                *
- *                                                                         *
- ***************************************************************************
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
- This file is part of the FreeRTOS distribution.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
- FreeRTOS is free software; you can redistribute it and/or modify it under
- the terms of the GNU General Public License (version 2) as published by the
- Free Software Foundation AND MODIFIED BY the FreeRTOS exception.
- ***NOTE*** The exception to the GPL is included to allow you to distribute
- a combined work that includes FreeRTOS without being obliged to provide the
- source code for proprietary components outside of the FreeRTOS kernel.
- FreeRTOS is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- more details. You should have received a copy of the GNU General Public
- License and the FreeRTOS license exception along with FreeRTOS; if not it
- can be viewed here: http://www.freertos.org/a00114.html and also obtained
- by writing to Richard Barry, contact details for whom are available on the
- FreeRTOS WEB site.
-
- 1 tab == 4 spaces!
-
- http://www.FreeRTOS.org - Documentation, latest information, license and
- contact details.
-
- http://www.SafeRTOS.com - A version that is certified for use in safety
- critical systems.
-
- http://www.OpenRTOS.com - Commercial support, development, porting,
- licensing and training services.
- */
-
-/*
- * Creates all the demo application tasks, then starts the scheduler.  The WEB
- * documentation provides more details of the standard demo application tasks.
- *
- * In addition to the standard tasks, main() creates two "Register Check" 
- * tasks.  These tasks write known values into every general purpose register,
- * then check each register to ensure it still contains the expected (written)
- * value.  The register check tasks operate at the idle priority so will get
- * repeatedly preempted.  A register being found to contain an incorrect value
- * following such a preemption would be indicative of an error in the context
- * switch mechanism.
- * 
- * Main.c also creates a task called "Check".  This only executes every three 
- * seconds but has the highest priority so is guaranteed to get processor time.  
- * Its main function is to check that all the other tasks are still operational.
- * Each task (other than the "flash" tasks) maintains a unique count that is 
- * incremented each time the task successfully completes its function.  Should 
- * any error occur within such a task the count is permanently halted.  The 
- * check task inspects the count of each task to ensure it has changed since
- * the last time the check task executed.  If all the count variables have 
- * changed all the tasks are still executing error free, and the check task
- * toggles the onboard LED.  Should any task contain an error at any time 
- * the LED toggle rate will change from 3 seconds to 500ms.
- *
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "FreeRTOSConfig.h"
@@ -89,7 +28,6 @@
 void vTestTask1(void *pvParameters);
 void vTestTask2(void *pvParameters);
 void vTestTask3(void *pvParameters);
-void vTestTask4(void *pvParameters);
 
 int main(void) {
 	int TaskNumber = 0;
