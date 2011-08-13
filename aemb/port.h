@@ -19,6 +19,10 @@
 #ifndef PORT_H_
 #define PORT_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -48,8 +52,6 @@ unsigned long *pulISRStack;
 
 /*-----------------------------------------------------------*/
 
-/*-----------------------------------------------------------*/
-
 inline void outbyte(char c) {
 	volatile char * OUTC = (char *) 0xFFFFFFC0;
 	*OUTC = c;
@@ -69,68 +71,20 @@ inline int setTimer0(int timer) {
 	*TMR0 = timer;
 }
 
-/**
- Hardware Mutex Signal.
- Unlock the hardware mutex, which is unlocked on reset.
- */
-inline void _aembFreeMTX() {
-	int tmp;
-	asm volatile ("msrclr %0, %1":"=r"(tmp):"K"(16));
-}
-
-/**
- Hardware Mutex Wait.
-
- Waits until the hardware mutex is unlocked. This should be used
- as part of a larger software mutex mechanism.
- */
-inline void _aembLockMTX() {
-	int rmsr;
-	do {
-		asm volatile ("msrset %0, %1":"=r"(rmsr):"K"(16));
-	} while (rmsr & 16);
-}
-
-/**
- Checks to see if currently executing Thread 1
- @return true if is Thread 1
- */
-
-inline int aembIsThread1() {
-	int rmsr;
-	asm volatile ("mfs %0, rmsr":"=r"(rmsr));
-	return ((rmsr & (1 << 29)));
-}
-
-/**
- Checks to see if currently executing Thread 0
- @return true if is Thread 0
- */
-
-inline int aembIsThread0() {
-	int rmsr;
-	asm volatile ("mfs %0, rmsr":"=r"(rmsr));
-	return ((!(rmsr & (1 << 29))));
-}
-
-void _loop() {
-	while (1)
-		;
-}
+/*-----------------------------------------------------------*/
 
 void _program_init() {
-	_aembLockMTX(); // enter critical section
-
-	// split and shift the stack for thread 1
-	if (aembIsThread0()) // main thread
-	{
-		_aembFreeMTX(); // exit critical section
-		while (1)
-			asm volatile ("nop");
-		// lock thread
-	}
-
-	_aembFreeMTX(); // exit critical section
+	int tmp;
+	asm volatile ("msrset %0, %1;"
+			"andi %0, %0, %1;"
+			"bnei %0, 0;"
+			"msrclr r0, %1;"
+			:"=r"(tmp)
+			:"K"(16));
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // PORT_H_
