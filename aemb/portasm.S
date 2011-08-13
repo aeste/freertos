@@ -106,16 +106,20 @@
 	/* Reload the rmsr from the stack, clear the enable interrupt bit in the
 	value before saving back to rmsr register, then return enabling interrupts
 	as we return. */
+	/* lwi r3, r1, 8 */
 	andi r3, r3, ~2
 	mts rmsr, r3
 	lwi r3, r1, 120
+	/* addik r1, r1, 132 */
 	rtid r14, 0
 	addik r1, r1, 132
 
 	/* Reload the rmsr from the stack, place it in the rmsr register, and
 	return without enabling interrupts. */
+	/* lwi r3, r1, 8 */
 	mts rmsr, r3
 	lwi r3, r1, 120
+	/* addik r1, r1, 132 */
 	rtsd r14, 0
 	addik r1, r1, 132
 
@@ -136,6 +140,7 @@ _interrupt_handler:
 	swi r14, r1, 76
 	/* Now switch to use the ISR stack. */
 	lwi r3, r0, pulISRStack
+	/* add r1, r3, r0 */
 	bralid r15, vTaskISRHandler
 	addk r1, r3, r0
 	portRESTORE_CONTEXT
@@ -151,7 +156,7 @@ VPortYieldASM:
 	swi r14, r1, 76
 	/* Now switch to use the ISR stack. */
 	lwi r3, r0, pulISRStack
-	/* DELAY add r1, r3, r0 */
+	/* add r1, r3, r0 */
 	bralid r15, vTaskSwitchContext
 	addk r1, r3, r0
 	portRESTORE_CONTEXT
