@@ -1,5 +1,5 @@
 FreeRTOS = ../FreeRTOS/Source/include/FreeRTOS.h
-FRTOSINC = -I../FreeRTOS/Source/include/ -I../aemb/ -I./
+FRTOSINC = -I../FreeRTOS/Source/include/ -I../FreeRTOS/Source/portable/GCC/AEMB2/ -I./
 
 CC = mb-gcc
 COPTS = -Wall -mxl-barrel-shift -mno-xl-soft-mul
@@ -27,14 +27,14 @@ queue.o: ../FreeRTOS/Source/queue.c ../FreeRTOS/Source/include/queue.h $(FreeRTO
 tasks.o: ../FreeRTOS/Source/tasks.c  ../FreeRTOS/Source/include/task.h $(FreeRTOS)
 	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/tasks.c
 	
-port.o: ../aemb/port.c ../aemb/port.h $(FreeRTOS) 
-	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../aemb/port.c
+port.o: ../FreeRTOS/Source/portable/GCC/AEMB2/port.c ../FreeRTOS/Source/portable/GCC/AEMB2/port.h $(FreeRTOS) 
+	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/portable/GCC/AEMB2/port.c
 
-portasm.o: ../aemb/portasm.S $(FreeRTOS)
-	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../aemb/portasm.S
+portasm.o: ../FreeRTOS/Source/portable/GCC/AEMB2/portasm.S $(FreeRTOS)
+	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/portable/GCC/AEMB2/portasm.S
 
-crt.o: ../aemb/crt.S $(FreeRTOS)
-	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../aemb/crt.S
+crt.o: ../FreeRTOS/Source/portable/GCC/AEMB2/crt.S $(FreeRTOS)
+	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/portable/GCC/AEMB2/crt.S
 #	mb-as ../aemb/crt.S -o crt.o
 
 heap.o: ../FreeRTOS/Source/portable/MemMang/heap_1.c $(FreeRTOS)
