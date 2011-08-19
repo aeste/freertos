@@ -2,12 +2,15 @@ AESTE FREERTOS PORT
 ===================
 
 Port of FreeRTOS to AESTE platforms. The port is for both co-operative
-and pre-emptive kernels. Only tested with Heap3 that uses malloc() and
-needs a libc to work.
+and pre-emptive kernels. 
 
 RELEASE NOTES
 -------------
 
-**R2011-08-13**
+R2011-08-19
+* Reorganised the port code into the FreeRTOS subdirectory.
+* Change the DEMO code to incorporate critical section of stdout.
+
+R2011-08-13
 * Working kernel.
 * Minor optimisation.
