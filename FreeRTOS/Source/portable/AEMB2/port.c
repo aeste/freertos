@@ -25,7 +25,6 @@
 #include "task.h"
 
 /* Standard includes. */
-#include <string.h>
 #include "port.h"
 
 /* Hardware includes. */
