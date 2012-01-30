@@ -7,6 +7,9 @@ and pre-emptive kernels.
 RELEASE NOTES
 -------------
 
+R2012-01-30
+* Bump to FreeRTOSV7.1.0 - compiles clean.
+
 R2011-08-19
 * Reorganised the port code into the FreeRTOS subdirectory.
 * Change the DEMO code to incorporate critical section of stdout.
