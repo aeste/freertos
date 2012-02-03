@@ -1,6 +1,7 @@
 FREERTOS = ../FreeRTOS/Source/include/FreeRTOS.h
 FRTOSINC = -I../FreeRTOS/Source/include/ -I../FreeRTOS/Source/portable/AEMB2/ -I./
 
+AR = mb-ar
 CC = mb-gcc
 CXX = mb-g++
 COPTS = -Wall -mxl-barrel-shift -mno-xl-soft-mul
@@ -13,8 +14,14 @@ LOPTS = -Wl,-defsym -Wl,_HEAP_SIZE=0x8000 -Wl,--entry=_vector_reset -Wl,--script
 all: freertos srec dump vmem
 #	rm -f *.o
 	
-freertos: main.o list.o queue.o tasks.o port.o heap.o portasm.o #crt.o
-	$(CXX) $(COPTS) $(LOPTS) $(OOPTS) *.o -o freertos.o
+#freertos: main.o list.o queue.o tasks.o port.o heap.o portasm.o #crt.o
+#	$(CXX) $(COPTS) $(LOPTS) $(OOPTS) *.o -o freertos.o
+
+freertos: main.o freertos.a
+	$(CXX) $(COPTS) $(LOPTS) $(OOPTS) main.o freertos.a -o freertos.o
+
+freertos.a: list.o queue.o tasks.o port.o heap.o portasm.o #crt.o
+	$(AR) cr freertos.a *.o
 
 main.o: main.c $(FREERTOS)
 	$(CXX) $(COPTS) $(OOPTS) $(FRTOSINC) -c main.c
@@ -58,4 +65,4 @@ vmem: srec
 	
 clean:
 	rm -f freertos.*
-	rm -f *.o
+	rm -f *.o *.a
