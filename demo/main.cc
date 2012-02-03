@@ -41,14 +41,14 @@ int main(void) {
 
 	/* Creating some tasks for the scheduler to run */
 	xTaskCreate( vTestTask1, /* Pointer to the function that implements the task */
-			"T0", /* Text name for the task. This is to facilitate debugging only */
+			(const signed char*)"T0", /* Text name for the task. This is to facilitate debugging only */
 			1000, /* Stack depth - the size is large because printf is used for the program testing */
 			NULL, /* Task parameter is not used */
 			1 , /* This task will run at priority 1 */
 			NULL); /* Task handle is not used */
 
-	xTaskCreate( vTestTask2, "T1", 1000, NULL,1 , NULL );
-	xTaskCreate( vTestTask3, "T2", 1000, NULL,1 , NULL );
+	xTaskCreate( vTestTask2, (const signed char*)"T1", 1000, NULL,1 , NULL );
+	xTaskCreate( vTestTask3, (const signed char*)"T2", 1000, NULL,1 , NULL );
 
 	/* Get the number of the tasks created from the task queue */
 	TaskNumber = uxTaskGetNumberOfTasks();
