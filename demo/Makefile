@@ -23,8 +23,8 @@ freertos: main.o freertos.a
 freertos.a: list.o queue.o tasks.o port.o heap.o portasm.o #crt.o
 	$(AR) cr freertos.a *.o
 
-main.o: main.c $(FREERTOS)
-	$(CXX) $(COPTS) $(OOPTS) $(FRTOSINC) -c main.c
+main.o: main.cc $(FREERTOS)
+	$(CXX) $(COPTS) $(OOPTS) $(FRTOSINC) -c main.cc
 
 list.o: ../FreeRTOS/Source/list.c ../FreeRTOS/Source/include/list.h $(FREERTOS)
 	$(CC) $(COPTS) $(OOPTS) $(FRTOSINC) -c ../FreeRTOS/Source/list.c
