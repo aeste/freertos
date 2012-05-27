@@ -10,6 +10,8 @@ customisations made to the upstream code.
 
 Historical Summary
 ------------------
+* R12.22 - Bump to FreeRTOSV7.1.1 - compiles clean.
+
 * R2012-01-30 - Bump to FreeRTOSV7.1.0 - compiles clean.
 
 * R2011-08-19 - Reorganised the port code into the FreeRTOS
